@@ -6,7 +6,7 @@
 
 Written by @ElCapor on github
 
-Notice: I am open to any work opportunities, i am specialized in reverse engineering and protection systems.
+Notice: I am open to any work opportunities, I am specialized in reverse engineering and protection systems.
 
 Communicate with me and let's make your security better
 
@@ -58,7 +58,7 @@ Open PolyHack.sln in visual studio and press build
 Download latest DLL from Github Actions
 
 #### Download Pre-Built
-[https://github.com/ElCapor/polytoria-executor/blob/master/Release/Polytoria%20Executor%20by%20ElCapor.7z](https://github.com/ElCapor/polytoria-executor/blob/master/Release/Polytoria%20Executor%20by%20ElCapor.7z)
+[Polytoria.Executor.by.ElCapor.7z](https://github.com/ElCapor/polytoria-executor/blob/master/Release/Polytoria%20Executor%20by%20ElCapor.7z)
 
 
 
