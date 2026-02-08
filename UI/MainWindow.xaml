@@ -1,4 +1,4 @@
-﻿<Window x:Class="PolyHack.MainWindow"
+<Window x:Class="PolyHack.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,87 +6,361 @@
         xmlns:local="clr-namespace:PolyHack"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Icon="yutech_2d.png" KeyDown="Window_KeyDown">
+        Title="Miisploit v1.0" Height="580" Width="1020" MinHeight="540" MinWidth="940"
+        Icon="yutech_2d.png" Background="#0f1115" KeyDown="Window_KeyDown"
+        FontFamily="Bahnschrift">
     <Window.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Margin" Value="2,0"/>
+        <Color x:Key="C_Bg0">#0b0f14</Color>
+        <Color x:Key="C_Bg1">#111827</Color>
+        <Color x:Key="C_Bg2">#1b2433</Color>
+        <Color x:Key="C_Fg">#e8eef6</Color>
+        <Color x:Key="C_Muted">#93a4bf</Color>
+        <Color x:Key="C_Accent">#22d3ee</Color>
+        <Color x:Key="C_AccentSoft">#12819a</Color>
+
+        <SolidColorBrush x:Key="Bg0" Color="{StaticResource C_Bg0}"/>
+        <SolidColorBrush x:Key="Bg1" Color="{StaticResource C_Bg1}"/>
+        <SolidColorBrush x:Key="Bg2" Color="{StaticResource C_Bg2}"/>
+        <SolidColorBrush x:Key="Fg" Color="{StaticResource C_Fg}"/>
+        <SolidColorBrush x:Key="Muted" Color="{StaticResource C_Muted}"/>
+        <SolidColorBrush x:Key="Accent" Color="{StaticResource C_Accent}"/>
+        <SolidColorBrush x:Key="AccentSoft" Color="{StaticResource C_AccentSoft}"/>
+
+        <LinearGradientBrush x:Key="WindowBg" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="{StaticResource C_Bg0}" Offset="0"/>
+            <GradientStop Color="{StaticResource C_Bg1}" Offset="0.55"/>
+            <GradientStop Color="{StaticResource C_Bg2}" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#3dd9f5" Offset="0"/>
+            <GradientStop Color="#22d3ee" Offset="0.5"/>
+            <GradientStop Color="#12a8c4" Offset="1"/>
+        </LinearGradientBrush>
+
+        <DropShadowEffect x:Key="SoftShadow" BlurRadius="18" ShadowDepth="2" Opacity="0.25" Color="Black"/>
+
+        <Style x:Key="IconNavButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="Width" Value="64"/>
+            <Setter Property="Height" Value="64"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1a2636"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)" To="1.05" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)" To="1.05" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentGradient}"/>
+            <Setter Property="Foreground" Value="#031019"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoft}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#0f6a7d"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GhostButton" TargetType="Button">
+            <Setter Property="Background" Value="#141d2b"/>
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1b2637"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1f2c40"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Background" Value="#0f1520"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Effect" Value="{StaticResource SoftShadow}"/>
+        </Style>
+
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#0b111a"/>
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="BorderBrush" Value="#263245"/>
+            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8"/>
-            <Setter Property="Focusable" Value="False"/>
+        </Style>
+
+        <Style x:Key="HiddenTabItem" TargetType="TabItem">
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+
+        <Style x:Key="FadeIn" TargetType="Grid">
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TranslateTransform Y="8"/>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#3E3E42" />
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#2D2D30" />
+                <Trigger Property="IsVisible" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.35"/>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)" To="0" Duration="0:0:0.35"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0"/>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)" To="8" Duration="0:0:0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
                 </Trigger>
             </Style.Triggers>
         </Style>
-    </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#1E1E1E" Padding="5,2">
+        <HierarchicalDataTemplate DataType="{x:Type local:ScriptNode}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
-                <Button Click="Load_Click" ToolTip="Open File">
-                    <TextBlock Text="📂" FontSize="16" Foreground="White"/>
-                </Button>
-                <Button Click="Save_Click" ToolTip="Save File">
-                    <TextBlock Text="💾" FontSize="16" Foreground="White"/>
-                </Button>
-                
-                <Rectangle Width="1" Fill="#444" Margin="5,4"/>
-
-                <Button Click="Inject_Click" ToolTip="Inject">
-                    <TextBlock Text="💉" FontSize="16" Foreground="White"/>
-                </Button>
-                <Button Click="Execute_Click" ToolTip="Execute">
-                    <TextBlock Text="▶️" FontSize="16" Foreground="White"/>
-                </Button>
-
-                <Rectangle Width="1" Fill="#444" Margin="5,4"/>
-
-                <Button Click="About_Click" ToolTip="About">
-                    <TextBlock Text="ℹ️" FontSize="16" Foreground="White"/>
-                </Button>
+                <TextBlock x:Name="NodeIcon" Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource Muted}" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding Name}" Foreground="{StaticResource Fg}"/>
             </StackPanel>
-        </Border>
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsDirectory}" Value="False">
+                    <Setter TargetName="NodeIcon" Property="Text" Value="&#xE8A5;"/>
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
 
-        <TabControl x:Name="MainTabControl" Grid.Row="1" Background="#1e1e1e" BorderThickness="0">
-            <TabControl.ItemContainerStyle>
-                <Style TargetType="TabItem">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
-            </TabControl.ItemContainerStyle>
-            <TabItem x:Name="EditorTab">
-                <wv2:WebView2 x:Name="wv2" />
-            </TabItem>
-            <TabItem x:Name="AboutTab">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Image Source="yutech_2d.png" Width="100" Height="100" Margin="10"/>
-                    <TextBlock Text="Executor made by YuTech Labs" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
-                    
-                    <TextBlock Foreground="White" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" TextAlignment="Center">
-                        <Run Text="Made by "/>
-                        <Hyperlink NavigateUri="https://github.com/ElCapor" RequestNavigate="Hyperlink_RequestNavigate">
-                            <Run Text="ElCapor" Foreground="#007ACC"/>
-                        </Hyperlink>
-                        <Run Text=" and "/>
-                        <Hyperlink NavigateUri="https://github.com/1337skid" RequestNavigate="Hyperlink_RequestNavigate">
-                            <Run Text="Ficello" Foreground="#007ACC"/>
-                        </Hyperlink>
-                        <LineBreak/>
-                        <Run Text="which are both from YuTech Labs" Foreground="Gray"/>
-                    </TextBlock>
+    <Grid Background="{StaticResource WindowBg}">
+        <Canvas IsHitTestVisible="False">
+            <Ellipse Width="420" Height="420" Fill="#112033" Opacity="0.45" Canvas.Left="-120" Canvas.Top="-120"/>
+            <Ellipse Width="520" Height="520" Fill="#0b1e28" Opacity="0.35" Canvas.Right="-180" Canvas.Top="40"/>
+        </Canvas>
 
-                    <Button Click="BackToEditor_Click" Content="Back to Editor" Background="#333" Foreground="White" Width="100" Margin="20"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Left Rail -->
+            <Border Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" Background="#0b111a">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Margin="12,16,12,8" HorizontalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="12" Background="#111827" BorderBrush="#1e2a3d" BorderThickness="1" Margin="0,0,0,6">
+                            <TextBlock Text="M" Foreground="{StaticResource Muted}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Miisploit" Foreground="{StaticResource Fg}" FontSize="12" HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,6,0,0" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource IconNavButton}" Tag="LUA" Click="Nav_Click" ToolTip="Lua">
+                            <StackPanel>
+                                <TextBlock Text="&#xE943;" FontFamily="Segoe MDL2 Assets" FontSize="18" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Lua" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource IconNavButton}" Tag="CMD" Click="Nav_Click" ToolTip="Commands" Margin="0,6,0,0">
+                            <StackPanel>
+                                <TextBlock Text="&#xE756;" FontFamily="Segoe MDL2 Assets" FontSize="18" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Cmd" FontSize="10" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Margin="8,0,8,16" HorizontalAlignment="Center">
+                        <TextBlock Text="Status" Foreground="{StaticResource Muted}" FontSize="10" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="StatusText" Text="Miisploit v1.0" Foreground="{StaticResource Fg}" FontSize="11" TextAlignment="Center" TextWrapping="Wrap" Width="70" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Top Bar -->
+            <Grid Grid.Row="0" Grid.Column="1" Margin="18,16,18,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Control Room" Foreground="{StaticResource Fg}" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="Live bridge, scripts, and tools" Foreground="{StaticResource Muted}" FontSize="11"/>
                 </StackPanel>
-            </TabItem>
-        </TabControl>
+                <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Click="Inject_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE7C3;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,6,0"/>
+                        <TextBlock Text="Inject"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Tabs -->
+            <TabControl x:Name="MainTabControl" Grid.Row="1" Grid.Column="1" Margin="18,0,18,12" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource HiddenTabItem}">
+                <!-- LUA TAB -->
+                <TabItem Header="LUA">
+                    <Grid Style="{StaticResource FadeIn}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource CardStyle}">
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Scripts" Foreground="{StaticResource Fg}" FontWeight="SemiBold"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Button Content="Refresh" Style="{StaticResource GhostButton}" Padding="8,4" Click="RefreshScripts_Click"/>
+                                        <Button Content="Open" Style="{StaticResource GhostButton}" Padding="8,4" Margin="6,0,0,0" Click="OpenScriptsFolder_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TreeView x:Name="ScriptsTree" Background="Transparent" BorderThickness="0" SelectedItemChanged="ScriptsTree_SelectedItemChanged"/>
+                            </DockPanel>
+                        </Border>
+
+                        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="#253245"/>
+
+                        <Border Grid.Column="2" Grid.Row="0" Style="{StaticResource CardStyle}">
+                            <wv2:WebView2 x:Name="MonacoView" Margin="0" />
+                        </Border>
+
+                        <StackPanel Grid.Column="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                            <Button Content="Load" Style="{StaticResource GhostButton}" Click="Load_Click" Margin="6,0,0,0"/>
+                            <Button Content="Save" Style="{StaticResource GhostButton}" Click="Save_Click" Margin="6,0,0,0"/>
+                            <Button Content="Clear" Style="{StaticResource GhostButton}" Click="Clear_Click" Margin="6,0,0,0"/>
+                            <Button Style="{StaticResource PrimaryButton}" Click="Execute_Click" Margin="8,0,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Execute"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+
+                <!-- CMD TAB -->
+                <TabItem Header="CMD">
+                    <Grid Style="{StaticResource FadeIn}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+                            <ListBox x:Name="CmdHistory" Background="Transparent" Foreground="#d4d4d4" BorderThickness="0"/>
+                        </Border>
+                        <TextBox x:Name="CmdInput" Grid.Row="1" Margin="0,10,0,0" Style="{StaticResource InputStyle}" KeyDown="CmdInput_KeyDown"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <!-- Console / Logs -->
+            <Border Grid.Row="2" Grid.Column="1" Margin="18,0,18,10" Style="{StaticResource CardStyle}">
+                <ListBox x:Name="OutputLog" Background="Transparent" Foreground="#8ea0b8" BorderThickness="0" FontSize="11">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="2,0"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+
+            <!-- Footer -->
+            <Border Grid.Row="3" Grid.Column="1" Background="#0d131a" Height="28">
+                <Grid Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Ready" Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="Miisploit v1.0" Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

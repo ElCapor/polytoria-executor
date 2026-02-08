@@ -1,0 +1,19 @@
+{
+    minhook = {
+        version = "v1.3.4",
+        installdir = [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b]],
+        static = true,
+        sysincludedirs = [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\include]],
+        __enabled = true,
+        envs = {
+            PATH = {
+                [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\bin]]
+            }
+        },
+        libfiles = [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\lib\minhook.lib]],
+        license = "BSD-2-Clause",
+        links = "minhook",
+        linkdirs = [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\lib]],
+        __requirestr = "minhook"
+    }
+}

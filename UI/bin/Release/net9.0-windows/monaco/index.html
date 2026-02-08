@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Local Monaco Editor</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+
+    <!-- 1. Load the Monaco loader script from your local copy -->
+    <script src="./lib/monaco/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': './lib/monaco/vs' } });
+
+        // Global API references
+        var GetText, SetText, SetTheme, AddIntellisense, Refresh;
+        var editor;
+        var Proposals = [];
+
+        require(['vs/editor/editor.main'], function () {
+            // Define Roblox-dark theme
+            monaco.editor.defineTheme('roblox-dark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'global', foreground: '69c3ff' },
+                    { token: 'keyword', foreground: 'ff3b73' },
+                    { token: 'comment', foreground: '808080' },
+                    { token: 'number', foreground: 'ffc35c' },
+                    { token: 'string', foreground: 'ff9169' }
+                ],
+                colors: {
+                    'editor.background': '#1E1E1E'
+                }
+            });
+
+            // Register completion provider for Lua
+            monaco.languages.registerCompletionItemProvider('lua', {
+                provideCompletionItems: function(model, position) {
+                    var word = model.getWordUntilPosition(position);
+                    var range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn
+                    };
+
+                    return {
+                        suggestions: Proposals.map(p => ({
+                            label: p.label,
+                            kind: p.kind,
+                            detail: p.detail,
+                            insertText: p.insertText,
+                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                            range: range
+                        }))
+                    };
+                }
+            });
+
+            editor = monaco.editor.create(document.getElementById('container'), {
+                value: `game["Players"].LocalPlayer.Size = Vector3.new(5, 5, 5) 
+
+while wait() do
+    game['Players'].LocalPlayer.MaxHealth = 676767
+    game['Players'].LocalPlayer.Health = 676767
+end
+
+game["Players"].LocalPlayer.WalkSpeed = 100
+game["Players"].LocalPlayer.JumpPower = 100`,
+                language: 'lua',
+                theme: "roblox-dark",
+                folding: true,
+                dragAndDrop: true,
+                links: false,
+                minimap: { enabled: false },
+                showFoldingControls: "always",
+                smoothScrolling: true,
+                automaticLayout: true
+            });
+
+            // API Implementation
+            GetText = function() { return editor.getValue(); };
+            SetText = function(x) { editor.setValue(x); };
+            SetTheme = function(themeName) { monaco.editor.setTheme(themeName); };
+            
+            AddIntellisense = function(label, kindStr, detail, insertText) {
+                var kind = monaco.languages.CompletionItemKind.Function;
+                if (monaco.languages.CompletionItemKind[kindStr]) {
+                    kind = monaco.languages.CompletionItemKind[kindStr];
+                }
+
+                Proposals.push({
+                    label: label,
+                    kind: kind,
+                    detail: detail,
+                    insertText: insertText || label
+                });
+            };
+
+            Refresh = function() {
+                var text = editor.getValue();
+                editor.setValue("");
+                editor.setValue(text);
+            };
+
+            window.onresize = function() { editor.layout(); };
+        });
+    </script>
+</body>
+</html>
