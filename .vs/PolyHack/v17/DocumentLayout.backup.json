@@ -1,0 +1,40 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Administrator\\Downloads\\polytoria-executor-master\\polytoria-executor-master\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4D4B2159-E7B7-BF84-4C7F-7E16104C1420}|UI\\PolyHack.csproj|c:\\users\\administrator\\downloads\\polytoria-executor-master\\polytoria-executor-master\\ui\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{4D4B2159-E7B7-BF84-4C7F-7E16104C1420}|UI\\PolyHack.csproj|solutionrelative:ui\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\polytoria-executor-master\\polytoria-executor-master\\UI\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "UI\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Administrator\\Downloads\\polytoria-executor-master\\polytoria-executor-master\\UI\\MainWindow.xaml",
+              "RelativeToolTip": "UI\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-07T23:44:09.241Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

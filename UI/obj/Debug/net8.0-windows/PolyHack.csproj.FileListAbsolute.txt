@@ -1,0 +1,6 @@
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\PolyHack.csproj.AssemblyReference.cache
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\PolyHack_Content.g.cs
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\PolyHack_MarkupCompile.cache
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\Administrator\Downloads\polytoria-executor-master\polytoria-executor-master\UI\obj\Debug\net8.0-windows\PolyHack_MarkupCompile.lref

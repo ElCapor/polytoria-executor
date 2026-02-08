@@ -67,5 +67,36 @@ namespace PolyHack
                 MessageBox.Show("Please inject before executing!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
+
+        public static string Request(string command)
+        {
+            if (!NamedPipeExist(luapipename)) return string.Empty;
+
+            try
+            {
+                using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", luapipename, PipeDirection.InOut))
+                {
+                    pipeClient.Connect(2000);
+                    
+                    // Send command
+                    using (StreamWriter sw = new StreamWriter(pipeClient))
+                    {
+                        sw.AutoFlush = true;
+                        sw.WriteLine("__REQ:" + command);
+                        
+                        // Read response
+                        using (StreamReader sr = new StreamReader(pipeClient))
+                        {
+                            return sr.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Pipe Request Error: " + ex.Message);
+                return string.Empty;
+            }
+        }
     }
 }

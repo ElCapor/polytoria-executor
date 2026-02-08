@@ -1,0 +1,53 @@
+{
+    find_program = {
+        nim = false,
+        zig = false,
+        ["7z"] = [[C:\Program Files\xmake\winenv\bin\7z]],
+        git = "git",
+        ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe]],
+        gzip = false,
+        ["cl.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe]]
+    },
+    find_package_windows_x64_fetch_package_xmake = {
+        ["xmake::minhook_42db4578518a4e7dab516663d1f46c6b_release_v1.3.4_external"] = {
+            libfiles = {
+                [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\lib\minhook.lib]]
+            },
+            sysincludedirs = {
+                [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\include]]
+            },
+            version = "v1.3.4",
+            linkdirs = {
+                [[C:\Users\Administrator\AppData\Local\.xmake\packages\m\minhook\v1.3.4\42db4578518a4e7dab516663d1f46c6b\lib]]
+            },
+            license = "BSD-2-Clause",
+            links = {
+                "minhook"
+            },
+            static = true
+        }
+    },
+    find_programver = {
+        ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe"] = "19.44.35222"
+    },
+    ["lib.detect.has_flags"] = {
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx_cxflags_-nologo_cl_sourceDependencies"] = true,
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx_cxflags_-nologo_-std:c++latest"] = true,
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx_cxflags_-nologo_-std:c++23"] = false,
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx__-nologo_-O2"] = true,
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx_cxflags_-nologo_-DNDEBUG"] = true,
+        ["windows_x64_C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe_19.44.35222_cxx_cxflags_-nologo_cl_external_includedir"] = true
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolcc = {
+        ["cl.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe]]
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolsh = {
+        ["link.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe]]
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolcxx = {
+        ["cl.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\cl.exe]]
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolld = {
+        ["link.exe"] = [[C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe]]
+    }
+}
