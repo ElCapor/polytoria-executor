@@ -1,5 +1,7 @@
 # POLHACK
 
+# If you wanna try out the V2 version (CLICK ON THIS LINK)[https://github.com/ElCapor/polytoria-executor/tree/V2]
+
 ![alt text](image.png)
 
 #1 Open Source Polytoria Executor
