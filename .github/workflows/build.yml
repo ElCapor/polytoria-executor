@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master, V2 ]
+  pull_request:
+    branches: [ main, master, V2 ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup xmake
+      uses: xmake-io/github-action-setup-xmake@v1
+      with:
+        xmake-version: latest
+        
+    - name: Configure xmake
+      run: xmake f -p windows -a x64 -m release
+      
+    - name: Build C++ DLL
+      run: xmake
+        
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PolytoriaExecutor
+        path: |
+          build/windows/x64/release/skipsped.dll
+          build/windows/x64/release/version.dll
