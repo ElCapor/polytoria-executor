@@ -19,10 +19,10 @@ jobs:
         xmake-version: latest
         
     - name: Configure xmake
-      run: xmake f -p windows -a x64 -m release
+      run: xmake f -p windows -a x64 -m release -y
       
     - name: Build C++ DLL
-      run: xmake
+      run: xmake -y
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
