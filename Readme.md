@@ -7,6 +7,8 @@
 ![alt text](image-2.png)
 
 # V2 : Added decompilation and explorer & save instance (doesnt work in solo mode !!)
+# THE KEY TO OPEN OR CLOSE THE UI IS "DELETE"
+
 #1 Open Source Polytoria Executor
 
 Written by @ElCapor on github
