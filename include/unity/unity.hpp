@@ -1,3 +1,5 @@
+#ifndef UNITY
+#define UNITY
 #ifndef UNITYRESOLVE_HPP
 #define UNITYRESOLVE_HPP
 
@@ -1648,6 +1650,14 @@ public:
 				return {};
 			}
 
+			auto GetFullNameOrDefault() -> String* {
+
+				static Method* method;
+				if (!method) method = Get("mscorlib.dll")->Get("Type", "System")->Get<Method>("get_FullNameOrDefault");
+				if (method) return method->Invoke<String*>(this);
+				return {};
+			}
+
 			auto GetNamespace() -> String* {
 
 				static Method* method;
@@ -3108,3 +3118,6 @@ private:
 	inline static void* pDomain{};
 };
 #endif // UNITYRESOLVE_HPPs
+
+
+#endif /* UNITY */
