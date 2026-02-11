@@ -23,6 +23,8 @@ void Sped::Init()
     LoadUnityAPI();
     LoadImGui();
 
+    polytoria::ScriptService::InstallHooks();
+
     polytoria::Game *game = polytoria::Game::GetInstance();
     if (game)
     {

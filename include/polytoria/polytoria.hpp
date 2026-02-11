@@ -2,6 +2,7 @@
 #define TYPES
 
 #include <unity/u.hpp>
+#include <HookManager.hpp>
 
 namespace polytoria
 {
@@ -176,6 +177,8 @@ namespace polytoria
             return klass;
         }
 
+        static void InstallHooks();
+
         static auto GetInstance() -> ScriptService*
         {
             static ScriptService* instance;
@@ -200,6 +203,7 @@ namespace polytoria
             BaseScript* scriptInstance = reinterpret_cast<BaseScript*>(gameInstance->GetGameObject()->AddComponent<ScriptInstance*>(ScriptInstance::GetClass()));
             scriptInstance->SetSource(US::New(script));
             scriptInstance->SetRunning(false);
+
             auto instance = GetInstance();
             if (method && instance)
                 method->Invoke<void, void *, BaseScript*>(instance, scriptInstance);

@@ -1,12 +1,21 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "Win64",
             "intelliSenseMode": "windows-msvc-x64",
-            "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+            "compilerPath": "D:\\VS\\VS2026\\VC\\Tools\\MSVC\\14.50.35717\\bin\\HostX64\\x64\\cl.exe",
             "cStandard": "c23",
             "cppStandard": "c++23",
-            "compileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+            "compileCommands": [
+                "${workspaceFolder}/.vscode/compile_commands.json"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
         }
     ],
     "version": 4
