@@ -506,6 +506,18 @@ namespace polytoria
             }
             return method->Invoke<DynValue*>(this, arr);
         }
+
+        auto Call(std::vector<DynValue*> objs) -> DynValue*
+        {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("Call", {"MoonSharp.Interpreter.DynValue[]"});
+            UArray<DynValue*>* arr = UArray<DynValue*>::New(DynValue::GetClass(), objs.size());
+            for (int i=0; i < objs.size(); i++)
+            {
+                arr->operator[](i) = objs[i];
+            }
+            return method->Invoke<DynValue*>(this, arr);
+        }
     };
 
     struct CallbackArguments : public UO {
