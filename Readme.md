@@ -19,27 +19,7 @@ Communicate with me and let's make your security better
 
 # Tree
 
-```
-.
-├── .github/
-│   └── workflows/
-│       └── build.yml
-├── src/ ----> Source code of the dll script runner
-│   ├── main.cpp
-│   └── unity.hpp  ----> Unity Resolve wrapper with an additional feature specially for polytoria
-├── UI/   ----------> The UI of the executor
-│   ├── App.xaml
-│   ├── App.xaml.cs
-│   ├── DllInjector.cs
-│   ├── MainWindow.xaml
-│   ├── MainWindow.xaml.cs
-│   ├── NamedPipes.cs
-│   └── PolyHack.csproj
-├── DumpGlobals.lua ---> A script to dump globals
-├── PolyHack.sln ----> UI Solution file
-├── Readme.md
-└── xmake.lua
-```
+TBD
 
 # Build
 
@@ -69,5 +49,24 @@ Download latest DLL from Github Actions
 
 
 
-# Community
+# Community (Warning: do not join on your main discord account, polytoria staff will ban you from their server)
 https://discord.gg/vscvprztP3
+
+
+# Special Mentions
+
+- [1337Skid](https://github.com/1337Skid) - Here since day 0
+- [NtReadVirtualMemory](https://github.com/NtReadVirtualMemory) - Contributed to the codebase + super good best friend fr
+- [NASNCeria](https://github.com/NASCeria) - Also known as NASEC - **Reverse Engineered Il2Cpp Delegate System in detail + Custom functions**
+
+<br>
+<br>
+
+# Thanks for everyone who supported the project, starred the github and those who wrote scripts
+
+In no particular order (as far as my memory goes) - dprtq max aip medic farhat miiselfs icy Moon y1sn povlander eli
+
+# Eternal disrespect to : 
+- Polytoria staff
+- Snitches
+- curmen10

@@ -417,6 +417,37 @@ namespace polytoria
                 return newNilMethod->Invoke<DynValue*>();
             return {};
         }
+
+        enum DataType : int 
+        {
+            Nil,
+            Void,
+            Boolean,
+            Number,
+            String,
+            Function,
+            Table,
+            Tuple,
+            UserData,
+            Thread,
+            ClrFunction,
+            TailCalRequest,
+            YieldRequest,
+        };
+
+        auto GetDataType() -> DataType
+        {
+            return (DataType)(GetClass()->GetValue<int>(this, "m_Type"));
+        }
+
+
+        // TODO: replace with a templated function , that takes a constrained T with a getclass function, i.e std::is_same_as
+        auto ToObject(void* csType) -> UO*
+        {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("ToObject", {"System.Type"});
+            return method->Invoke<UO*>(this, csType);
+        }
     };
 
     struct CallbackArguments : public UO {
@@ -437,6 +468,14 @@ namespace polytoria
         auto GetCount() -> int {
             return GetClass()->GetValue<int>(this, "m_Count");
         }
+
+        auto RawGet(int at, bool translatevoids) -> DynValue*
+        {
+            //if (at < GetCount() || GetArgs() == nullptr) return nullptr;
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("RawGet");
+            return method->Invoke<DynValue*, CallbackArguments*, int, bool>(this, at, translatevoids);
+        }
     };
 
     struct Closure : public UO {
@@ -451,7 +490,7 @@ namespace polytoria
         }
 
 
-    }
+    };
 }
 
 #endif /* POLYTORIA */

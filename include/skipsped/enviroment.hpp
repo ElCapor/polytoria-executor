@@ -28,24 +28,34 @@ DynValue* hookinvokeserver(void*, ScriptExecutionContext* ctx, CallbackArguments
     int count = args->GetCount();
     std::cout << "count = " << count << std::endl;
 	
-	if (count < 2) {
+	if (count < 1) {
 		std::cout << "Not enough arguments passed to InvokeServer hook" << std::endl;
 		return DynValue::NewString(US::New("Not enough arguments"));
 	}
+
+	DynValue* net_event = args->RawGet(0, false);
+	if (net_event == nullptr && net_event->GetDataType() != 8)
+	{
+		std::cout << "fAAAAAAA" << std::endl;
+		return DynValue::NewString(US::New("Invalid argument..."));
+	}
+	NetworkEvent* obj = (NetworkEvent*)(net_event->ToObject(NetworkEvent::GetClass()->GetType()));
+	std::cout << obj->GetName()->ToString() << std::endl;
+	// print(InvokeServerHook(game["Hidden"]["CookTool"]))
 	
-    // Get the args list - cast from IList to List if needed
-    auto argList = args->GetArgs();
+    // // Get the args list - cast from IList to List if needed
+    // auto argList = args->GetArgs();
     
-    // Try accessing size directly (it's a field in List<Type>)
-    // The IList interface might have Count property instead
-    int listSize = argList->size;  // If cast to List* worked
-    std::cout << "listSize = " << listSize << std::endl;
+    // // Try accessing size directly (it's a field in List<Type>)
+    // // The IList interface might have Count property instead
+    // int listSize = argList->size;  // If cast to List* worked
+    // std::cout << "listSize = " << listSize << std::endl;
     
-    // // Iterate through arguments
-    // for (int i = 0; i < count; i++) {
-    //     DynValue* arg = (*argList)[i];  // Use operator[]
-    //     std::cout << "Arg " << i << std::endl;
-    // }
+    // // // Iterate through arguments
+    // // for (int i = 0; i < count; i++) {
+    // //     DynValue* arg = (*argList)[i];  // Use operator[]
+    // //     std::cout << "Arg " << i << std::endl;
+    // // }
     
     return DynValue::NewString(US::New("check urcmd nigga"));
 }
