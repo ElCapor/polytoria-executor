@@ -658,6 +658,8 @@ HRESULT Sped::HookedPresent(IDXGISwapChain *swap, UINT swapInterval, UINT flags)
 
 
 bool NetTracer::isReady = false;
+polytoria::Script* NetTracer::exec;
+polytoria::DynValue* NetTracer::callback;
 
 void Sped::RenderNetMessageLoggerTab()
 {
@@ -669,5 +671,22 @@ void Sped::RenderNetMessageLoggerTab()
         NetTracer::InstallHooks();
         NetTracer::isReady = true;
     }
+
+    ImGui::Text("Callback : %p", NetTracer::callback);
+    ImGui::Text("Exec %p", NetTracer::exec);
+
+    if (ImGui::Button("Try callback"))
+    {
+        NetTracer::callback->GetFunction()->Call({US::New("Hi")});
+    }
+
+    // if (ImGui::Button("wowie"))
+    // {
+    //     UK* obj = U::Get("mscorlib.dll")->Get("Object", "System");
+    //     auto arr = U::UnityType::Array<UO*>::New(obj, 1);
+    //     std::cout << arr->GetType()->GetFullNameOrDefault()->ToString() << std::endl;
+
+    //     // returns System.Object[]
+    // }
 
 }

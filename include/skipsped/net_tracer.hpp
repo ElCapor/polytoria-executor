@@ -3,6 +3,7 @@
 #include <HookManager.hpp>
 
 #include <polytoria/polytoria.hpp>
+#include <tuple>
 using namespace polytoria;
 
 struct NetTracer {
@@ -20,6 +21,9 @@ struct NetTracer {
         std::cout << "[INFO] Invoking client RPC hook for message: " << evt->GetName()->ToString() << std::endl;
         HookManager::Call(UserCode_InvokeClientRpc__NetMessage, evt, message);
     }
+
+    static Script* exec;
+    static DynValue* callback;
 
     static void InstallHooks()
     {

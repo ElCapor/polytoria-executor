@@ -1448,6 +1448,13 @@ public:
 
 			struct MonitorData* monitor{ nullptr };
 
+			static auto GetClass() -> Class*
+			{
+				static Class* klass;
+				if (!klass) klass =  Get("mscorlib.dll")->Get("Object", "System");
+				return klass;
+			}
+
 			auto GetType() -> CsType* {
 
 				static Method* method;

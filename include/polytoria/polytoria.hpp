@@ -362,6 +362,18 @@ namespace polytoria
         }
     };
 
+    struct Script : public UO {
+         static auto GetClass() -> UK*
+        {
+            static UK* klass;
+            if (!klass) {
+                klass = U::Get(ASSEMBLY_CSHARP_FIRSTPASS)->Get("Script", "MoonSharp.Interpreter");
+                if (!klass) std::cout << "[ERROR] Failed to find class: Script" << std::endl;
+            }
+            return klass;
+        }
+    };
+
     struct ScriptExecutionContext : public UO {
         static auto GetClass() -> UK*
         {
@@ -372,7 +384,15 @@ namespace polytoria
             }
             return klass;
         }
+
+        auto GetOwnerScript() -> Script* {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("get_OwnerScript");
+            return method->Invoke<Script*>(this);
+        }
     };
+
+    struct Closure;
 
     struct DynValue : public UO {
         static auto GetClass() -> UK*
@@ -448,6 +468,44 @@ namespace polytoria
             if (!method) method = GetClass()->Get<UM>("ToObject", {"System.Type"});
             return method->Invoke<UO*>(this, csType);
         }
+
+        auto GetFunction() -> Closure*
+        {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("get_Function");
+            return method->Invoke<Closure*>(this);
+        }
+    };
+
+    struct Closure : public UO {
+        static auto GetClass() -> UK*
+        {
+            static UK* klass;
+            if (!klass) {
+                klass = U::Get(ASSEMBLY_CSHARP_FIRSTPASS)->Get("Closure", "MoonSharp.Interpreter");
+                if (!klass) std::cout << "[ERROR] Failed to find class: Closure" << std::endl;
+            }
+            return klass;
+        }
+
+        auto Call() -> DynValue*
+        {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("Call", {});
+            return method->Invoke<DynValue*>(this);
+        }
+
+        auto Call(std::vector<UO*> objs) -> DynValue*
+        {
+            static UM* method;
+            if (!method) method = GetClass()->Get<UM>("Call", {"System.Object[]"});
+            UArray<UO*>* arr = UArray<UO*>::New(UO::GetClass(), objs.size());
+            for (int i=0; i < objs.size(); i++)
+            {
+                arr->operator[](i) = objs[i];
+            }
+            return method->Invoke<DynValue*>(this, arr);
+        }
     };
 
     struct CallbackArguments : public UO {
@@ -478,19 +536,7 @@ namespace polytoria
         }
     };
 
-    struct Closure : public UO {
-        static auto GetClass() -> UK*
-        {
-            static UK* klass;
-            if (!klass) {
-                klass = U::Get(ASSEMBLY_CSHARP_FIRSTPASS)->Get("Closure", "MoonSharp.Interpreter");
-                if (!klass) std::cout << "[ERROR] Failed to find class: Closure" << std::endl;
-            }
-            return klass;
-        }
-
-
-    };
+    
 }
 
 #endif /* POLYTORIA */

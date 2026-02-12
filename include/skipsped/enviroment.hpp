@@ -5,9 +5,9 @@
 #include <polytoria/polytoria.hpp>
 using namespace polytoria;
 #include <unity/il2cpp.hpp>
-
 #include <unity/u.hpp>
 #include <format>
+#include <skipsped/net_tracer.hpp>
 
 using CF = DynValue*(*)(void*, ScriptExecutionContext*, CallbackArguments*);
 
@@ -28,7 +28,7 @@ DynValue* hookinvokeserver(void*, ScriptExecutionContext* ctx, CallbackArguments
     int count = args->GetCount();
     std::cout << "count = " << count << std::endl;
 	
-	if (count < 1) {
+	if (count < 2) {
 		std::cout << "Not enough arguments passed to InvokeServer hook" << std::endl;
 		return DynValue::NewString(US::New("Not enough arguments"));
 	}
@@ -41,7 +41,18 @@ DynValue* hookinvokeserver(void*, ScriptExecutionContext* ctx, CallbackArguments
 	}
 	NetworkEvent* obj = (NetworkEvent*)(net_event->ToObject(NetworkEvent::GetClass()->GetType()));
 	std::cout << obj->GetName()->ToString() << std::endl;
-	// print(InvokeServerHook(game["Hidden"]["CookTool"]))
+
+	DynValue* callback = args->RawGet(1, false);
+	if (callback == nullptr && callback->GetDataType() != DynValue::DataType::Function)
+	{
+		std::cout << "sorry not a function wowie" << std::endl;
+		return DynValue::NewString(US::New("Invalid arg, expected function..."));
+	}
+
+	NetTracer::callback = callback;
+	NetTracer::exec = ctx->GetOwnerScript();
+
+	// print(InvokeServerHook(game["Hidden"]["CookTool"], function() print('hi') end))
 	
     // // Get the args list - cast from IList to List if needed
     // auto argList = args->GetArgs();
@@ -70,7 +81,7 @@ void RegisterCFunction(const std::string& name, CF func, Table* table)
 	
 	if (!dynValueKlass || !scriptExecutionContext || !callbackArguments) return;
 			
-	auto mi = il2cpp::CreateCustomMethodInfo("huge anus",
+	auto mi = il2cpp::CreateCustomMethodInfo(std::format("{}_methodinfo", name).c_str(),
 		{
 			(il2cpp::Il2CppType*)scriptExecutionContext->GetType(),
 			(il2cpp::Il2CppType*)callbackArguments->GetType()
