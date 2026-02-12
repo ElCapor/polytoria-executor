@@ -14,6 +14,7 @@
 #include <ShlObj_core.h>
 #include <nfd.h>
 #include <skipsped/net_tracer.hpp>
+#include <polytoria/networking/mirror_hook.hpp>
 
 using namespace sped;
 
@@ -24,6 +25,7 @@ void Sped::Init()
     LoadImGui();
 
     polytoria::ScriptService::InstallHooks();
+    mirror::InstallHooks();
 
     polytoria::Game *game = polytoria::Game::GetInstance();
     if (game)

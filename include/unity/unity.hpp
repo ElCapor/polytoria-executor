@@ -250,7 +250,7 @@ public:
 
 		template <typename T>
 		auto GetStaticValue(T* value) const -> void {
-			if (!static_field) return;
+			//if (!static_field) return; TODO: keep disabled until method to retrieve static_field is fixed
 			if (mode_ == Mode::Il2Cpp) return Invoke<void, void*, T*>("il2cpp_field_static_get_value", address, value);
 			else
 			{
@@ -781,7 +781,7 @@ private:
 			do {
 				if ((field = Invoke<void*>("il2cpp_class_get_fields", pKlass, &iter))) {
 					const auto pField = new Field{ .address = field, .name = Invoke<const char*>("il2cpp_field_get_name", field), .type = new Type{.address = Invoke<void*>("il2cpp_field_get_type", field)}, .klass = klass, .offset = Invoke<int>("il2cpp_field_get_offset", field), .static_field = false, .vTable = nullptr };
-					pField->static_field = pField->offset <= 0;
+					pField->static_field = pField->offset <= 0; // TODO: improve static_field detection cuz this is MALFUNCTIONING sometimes
 					pField->type->name = Invoke<const char*>("il2cpp_type_get_name", pField->type->address);
 					pField->type->size = -1;
 					klass->fields.push_back(pField);
