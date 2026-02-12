@@ -589,6 +589,11 @@ void Sped::LoadUnityAPI()
 
     UnityResolve::Init(gameAssembly, UnityResolve::Mode::Il2Cpp);
     UnityResolve::ThreadAttach();
+
+    for (UF* field: polytoria::Script::GetClass()->fields)
+    {
+        std::cout << "Field: " << field->name << " | Type: " << field->type->name << std::endl; 
+    }
     state = SpedState::Ready;
 }
 

@@ -39,6 +39,7 @@ DynValue* hookinvokeserver(void*, ScriptExecutionContext* ctx, CallbackArguments
 		std::cout << "fAAAAAAA" << std::endl;
 		return DynValue::NewString(US::New("Invalid argument..."));
 	}
+	
 	NetworkEvent* obj = (NetworkEvent*)(net_event->ToObject(NetworkEvent::GetClass()->GetType()));
 	std::cout << obj->GetName()->ToString() << std::endl;
 
@@ -51,7 +52,9 @@ DynValue* hookinvokeserver(void*, ScriptExecutionContext* ctx, CallbackArguments
 	// WTFF IS WRONG WITH TS ????
 	// InvokeServerHook(game["Hidden"]["DraggerPlace"], function(msg) print(msg) end)
 	NetTracer::callback = callback;
+	ctx->GetOwnerScript()->GetRegistry()->SetItem((UO*)US::New("InvokeServerCallback"), callback);
 	NetTracer::exec = ctx->GetOwnerScript();
+	
 
 	// print(InvokeServerHook(game["Hidden"]["CookTool"], function() print('hi') end))
 	
