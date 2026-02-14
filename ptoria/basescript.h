@@ -2,11 +2,9 @@
 #ifndef BASESCRIPT_H
 #define BASESCRIPT_H
 
-#include <ptoria/instancebase.h>
-#include <ptoria/objectmixin.h>
+#include <ptoria/instance.h>
 
-struct BaseScript : public InstanceBase,
-                    public ObjectMixin<BaseScript, "BaseScript", Unity::AssemblyCSharp> {
+struct BaseScriptBase : public InstanceBase {
     void SetRunning(bool value);
     bool Running();
     void SetSource(UnityString* value);
@@ -14,5 +12,8 @@ struct BaseScript : public InstanceBase,
     bool RequestedRun();
     void SetRequestedRun(bool value);
 };
+
+struct BaseScript : public BaseScriptBase,
+                    public Object<BaseScript, "BaseScript", Unity::AssemblyCSharp> {};
 
 #endif

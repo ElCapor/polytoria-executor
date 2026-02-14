@@ -1,4 +1,3 @@
-#include <ptoria/instancebase.h>
 #include <ptoria/instance.h>
 
 UnityString* InstanceBase::Name() {

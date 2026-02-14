@@ -4,7 +4,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <core/core.h>
 #include <ptoria/game.h>
-
+#include <ptoria/scriptinstance.h>
 int main_thread()
 {
     OpenConsole();
@@ -36,5 +36,7 @@ int main_thread()
     for (auto& child: gameInstance->Children()->ToVector()) {
         spdlog::info("Child Instance Name: {}", child->Name()->ToString());
     }
+
+    spdlog::info("ScriptInstance Class Name: {}", StaticClass<ScriptInstance>()->name);
     return 0;
 }
