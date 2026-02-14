@@ -23,6 +23,9 @@ struct ScriptService : public InstanceBase,
     static DynValue *ExecuteScriptInstanceHook(ScriptService *self, Script *script, BaseScript *instance);
 
     static void InstallHooks();
+
+    static DynValue* callback;
+    static Script* exec;
 };
 
 #endif /* SCRIPTSERVICE_H */

@@ -9,6 +9,7 @@ struct Script : public Object<Script, "Script", Unity::AssemblyFirstPass, "MoonS
 {
 
     Table *Globals();
+    Table *Registry();
 };
 
 #endif /* SCRIPT_H */

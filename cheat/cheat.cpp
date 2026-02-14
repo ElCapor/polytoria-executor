@@ -7,6 +7,7 @@
 #include <ptoria/scriptinstance.h>
 #include <ptoria/scriptservice.h>
 #include <mirror/hooks.h>
+#include <ptoria/networkevent.h>
 
 int main_thread()
 {
@@ -45,7 +46,8 @@ int main_thread()
     ScriptService::InstallHooks();
     ScriptService* scriptService = ScriptService::GetInstance();
     nasec::Assert(scriptService != nullptr, "Failed to get ScriptService instance");
-    ScriptService::RunScript<ScriptInstance>("print(poop())");
+    ScriptService::RunScript<ScriptInstance>(R"(InvokeServerHook(game["Hidden"]["DraggerPlace"], function(msg) print(msg) end))");
     mirror::InstallHooks();
+    NetworkEvent::InstallHooks();
     return 0;
 }
