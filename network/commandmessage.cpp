@@ -14,9 +14,7 @@ void mirror::messages::CommandMessage::Deserialize(NetworkStream &stream)
 
 UnityComponent *mirror::messages::CommandMessage::TargetIdentity()
 {
-    UnityDictionary<uint32_t, UnityComponent *> *spawnedDict = nullptr;
-    UnityResolve::Get("Mirror.dll")->Get("NetworkClient")->Get<UnityField>("spawned")->GetStaticValue(&spawnedDict);
-    return spawnedDict->GetValueByKey(netId);
+    return NetworkClient::Spawned()->GetValueByIndex(netId);
 }
 
 UnityGameObject *mirror::messages::CommandMessage::Target()

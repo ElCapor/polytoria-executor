@@ -112,14 +112,14 @@ namespace Unity
 
     template <typename T, nasec::meta::String Name, nasec::meta::String... Types>
     auto GetStaticFieldValue(UnityClass* klass) -> T {
-        static T* value = nullptr;
+        static T value;
 
         nasec::Assert(klass != nullptr, "Klass was nullptr");
         auto field = GetField<Name, Types...>(klass);
         field->GetStaticValue(&value);
-        nasec::Assert(value != nullptr, "Failed to get static field value");
+        //nasec::Assert(value != nullptr, "Failed to get static field value");
 
-        return *value;
+        return value;
     }
 
     template <typename T, nasec::meta::String Name, nasec::meta::String... Types>
