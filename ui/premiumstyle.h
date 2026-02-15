@@ -5,9 +5,16 @@
 
 namespace PremiumStyle
 {
+    // Global toggle for premium style
+    extern bool IsPremiumEnabled;
+    
     // Font pointers for different uses
-    extern ImFont* FontRegular;
-    extern ImFont* FontBold;
+    extern ImFont* FontRegular;      // SNPro-Regular - body text
+    extern ImFont* FontBold;         // SNPro-Bold - titles, headers
+    extern ImFont* FontLight;        // SNPro-Light - subtle text
+    extern ImFont* FontSemiBold;     // SNPro-SemiBold - subheaders
+    extern ImFont* FontMedium;       // SNPro-Medium - emphasis
+    extern ImFont* FontExtraBold;    // SNPro-ExtraBold - strong emphasis
     
     // Color palette - accessible for custom widgets
     namespace Colors
@@ -61,7 +68,16 @@ namespace PremiumStyle
     // Apply the premium style to ImGui
     void ApplyStyle();
     
-    // Helper functions for custom styling
+    // Apply default ImGui style
+    void ApplyDefaultStyle();
+    
+    // Toggle between premium and default style
+    void ToggleStyle();
+    
+    // Set style based on IsPremiumEnabled
+    void UpdateStyle();
+    
+    // Helper functions for custom styling (only apply when premium is enabled)
     void PushAccentStyle();
     void PopAccentStyle();
     
@@ -76,6 +92,9 @@ namespace PremiumStyle
     
     // Draw a styled button with custom colors
     bool StyledButton(const char* label, bool useAccent = true, ImVec2 size = ImVec2(0, 0));
+    
+    // Helper to check if premium styling should be applied
+    inline bool ShouldApplyPremium() { return IsPremiumEnabled; }
 }
 
 #endif /* PREMIUMSTYLE_H */

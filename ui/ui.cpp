@@ -146,6 +146,8 @@ HRESULT HookPresent(IDXGISwapChain* swap, UINT swapInterval, UINT flags)
 #include <ui/saveinstance.h>
 #include <ui/executor.h>
 #include <ui/scriptsource.h>
+#include <ui/settingsui.h>
+#include <ui/packetlog.h>
 
 void UI::DrawWaitingScreen()
 {
@@ -153,8 +155,11 @@ void UI::DrawWaitingScreen()
     ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2((ImGui::GetIO().DisplaySize.x - windowSize.x) / 2, (ImGui::GetIO().DisplaySize.y - windowSize.y) / 2), ImGuiCond_Always);
     
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
+    }
     
     ImGui::Begin("##waiting", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
     
@@ -162,14 +167,18 @@ void UI::DrawWaitingScreen()
     const char* title = "PolyHack";
     const char* subtitle = "Waiting for Unity...";
     
-    if (PremiumStyle::FontBold)
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PushFont(PremiumStyle::FontBold);
     
     ImVec2 titleSize = ImGui::CalcTextSize(title);
     ImGui::SetCursorPosX((windowSize.x - titleSize.x) / 2);
-    ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "%s", title);
     
-    if (PremiumStyle::FontBold)
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "%s", title);
+    else
+        ImGui::Text("%s", title);
+    
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PopFont();
     
     ImGui::Spacing();
@@ -179,7 +188,9 @@ void UI::DrawWaitingScreen()
     ImGui::TextDisabled("%s", subtitle);
     
     ImGui::End();
-    ImGui::PopStyleVar(2);
+    
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar(2);
 }
 
 void UI::DrawMainUI()
@@ -189,19 +200,27 @@ void UI::DrawMainUI()
     ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_FirstUseEver);
     
     // Premium window styling
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12, 12));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12, 12));
+    }
     
-    ImGui::Begin("PolyHack", nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("PolyHack");
     
     // Header section with branding
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 4));
     
     // Title with accent color
-    if (PremiumStyle::FontBold)
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PushFont(PremiumStyle::FontBold);
-    ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "PolyHack");
-    if (PremiumStyle::FontBold)
+    
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "PolyHack");
+    else
+        ImGui::Text("PolyHack");
+    
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PopFont();
     
     ImGui::SameLine();
@@ -218,7 +237,9 @@ void UI::DrawMainUI()
     ImGui::Spacing();
     
     // Tab bar with premium styling
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
+    
     if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_TabListPopupButton))
     {
         if (ImGui::BeginTabItem("Explorer"))
@@ -234,6 +255,16 @@ void UI::DrawMainUI()
         if (ImGui::BeginTabItem("Executor"))
         {
             ExecutorUI::DrawTab();
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Packet Log"))
+        {
+            PacketLogUI::DrawTab();
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Settings"))
+        {
+            SettingsUI::DrawTab();
             ImGui::EndTabItem();
         }
         for (auto it = ScriptSourceUI::openTabs.begin(); it != ScriptSourceUI::openTabs.end();)
@@ -252,10 +283,14 @@ void UI::DrawMainUI()
         }
         ImGui::EndTabBar();
     }
-    ImGui::PopStyleVar();
+    
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar();
     
     ImGui::End();
-    ImGui::PopStyleVar(2);
+    
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar(2);
 }
 
 void UI::DrawClosedHint()
@@ -264,22 +299,29 @@ void UI::DrawClosedHint()
     ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2((ImGui::GetIO().DisplaySize.x - windowSize.x) / 2, (ImGui::GetIO().DisplaySize.y - windowSize.y) / 2), ImGuiCond_Always);
     
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 16));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 16));
+    }
     
     ImGui::Begin("##closed", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
     
     const char* title = "UI Hidden";
     const char* hint = "Press DELETE to toggle the UI";
     
-    if (PremiumStyle::FontBold)
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PushFont(PremiumStyle::FontBold);
     
     ImVec2 titleSize = ImGui::CalcTextSize(title);
     ImGui::SetCursorPosX((windowSize.x - titleSize.x) / 2);
-    ImGui::TextColored(ImVec4(0.95f, 0.78f, 0.20f, 1.00f), "%s", title);
     
-    if (PremiumStyle::FontBold)
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::TextColored(ImVec4(0.95f, 0.78f, 0.20f, 1.00f), "%s", title);
+    else
+        ImGui::Text("%s", title);
+    
+    if (PremiumStyle::IsPremiumEnabled && PremiumStyle::FontBold)
         ImGui::PopFont();
     
     ImGui::Spacing();
@@ -289,5 +331,7 @@ void UI::DrawClosedHint()
     ImGui::TextDisabled("%s", hint);
     
     ImGui::End();
-    ImGui::PopStyleVar(2);
+    
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar(2);
 }

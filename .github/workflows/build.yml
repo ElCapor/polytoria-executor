@@ -1,0 +1,82 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master, dev ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+    branches: [ main, master, dev ]
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup xmake
+      uses: xmake-io/github-action-setup-xmake@v1
+      with:
+        xmake-version: latest
+        
+    - name: Configure xmake
+      run: xmake f -p windows -a x64 -m release -y
+      
+    - name: Build C++ DLL
+      run: xmake -y
+        
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PolytoriaExecutor
+        path: |
+          build/windows/x64/release/wowiezz.dll
+          build/windows/x64/release/injector.exe
+
+    - name: Create Release
+      id: create_release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - Automated build of Polytoria Executor
+        draft: true
+        prerelease: false
+
+    - name: Upload wowiezz.dll
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/windows/x64/release/wowiezz.dll
+        asset_name: wowiezz.dll
+        asset_content_type: application/octet-stream
+
+    - name: Upload injector.exe
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/windows/x64/release/injector.exe
+        asset_name: injector.exe
+        asset_content_type: application/octet-stream
+
+    - name: Publish release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: StuYarrow/publish-release@v1.1.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        id: ${{ steps.create_release.outputs.id }}

@@ -36,8 +36,11 @@ void ExecutorUI::DrawTab()
     ImGui::Spacing();
     
     // Toolbar with styled buttons
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 6));
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12, 6));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 6));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12, 6));
+    }
     
     // Run button with accent styling
     if (PremiumStyle::StyledButton("Run Script", true, ImVec2(120, 0)))
@@ -89,18 +92,25 @@ void ExecutorUI::DrawTab()
         scriptEditor->SetText("");
     }
     
-    ImGui::PopStyleVar(2);
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar(2);
     
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
     
     // Editor with child window styling
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.0f);
-    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.04f, 0.04f, 0.06f, 1.00f));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.0f);
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.04f, 0.04f, 0.06f, 1.00f));
+    }
     
     scriptEditor->Render("##LuaScriptEditor", false, ImVec2(0, 0), true);
     
-    ImGui::PopStyleColor();
-    ImGui::PopStyleVar();
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+    }
 }

@@ -27,29 +27,42 @@ void SaveInstanceUI::DrawTab()
     ImGui::Spacing();
     
     // Premium styled content area
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.0f);
-    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.05f, 0.05f, 0.07f, 1.00f));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.0f);
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.05f, 0.05f, 0.07f, 1.00f));
+    }
     
     ImGui::BeginChild("SaveContent", ImVec2(0, 0), true);
     
     // Info box
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12, 10));
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.08f, 0.08f, 0.12f, 1.00f));
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12, 10));
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.08f, 0.08f, 0.12f, 1.00f));
+    }
     
     ImGui::BeginChild("InfoBox", ImVec2(0, 80), true);
-    ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "Export Options");
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::TextColored(ImVec4(0.00f, 0.75f, 0.85f, 1.00f), "Export Options");
+    else
+        ImGui::Text("Export Options");
     ImGui::Spacing();
     ImGui::TextDisabled("Save the entire game instance hierarchy to a .poly file.");
     ImGui::TextDisabled("This includes all instances, properties, and scripts.");
     ImGui::EndChild();
     
-    ImGui::PopStyleColor();
-    ImGui::PopStyleVar();
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+    }
     
     ImGui::Spacing();
     
     // Save button with accent styling
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 12));
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 12));
     if (PremiumStyle::StyledButton("Save To File", true, ImVec2(200, 0)))
     {
         std::vector<filesys::FileSelectFilters> filters = {
@@ -67,10 +80,14 @@ void SaveInstanceUI::DrawTab()
             spdlog::info("Save cancelled or failed");
         }
     }
-    ImGui::PopStyleVar();
+    if (PremiumStyle::IsPremiumEnabled)
+        ImGui::PopStyleVar();
     
     ImGui::EndChild();
     
-    ImGui::PopStyleColor();
-    ImGui::PopStyleVar();
+    if (PremiumStyle::IsPremiumEnabled)
+    {
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+    }
 }
