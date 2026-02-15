@@ -9,6 +9,7 @@ struct InstanceBase {
     UnityString* Name();
     UnityArray<InstanceBase*>* Children();
     UnityString* FullName();
+    void CmdClicked();
 };
 
 struct Instance : public InstanceBase,

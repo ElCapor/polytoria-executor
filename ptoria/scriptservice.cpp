@@ -3,6 +3,9 @@
 #include <hooking/hookmanager.h>
 #include <moonsharp/cinterface.h>
 #include <ptoria/networkevent.h>
+#include <ptoria/player.h>
+#include <ptoria/tool.h>
+#include <ptoria/chatservice.h>
 
 ScriptService *ScriptService::GetInstance()
 {
@@ -45,10 +48,187 @@ DynValue* poop(void*, ScriptExecutionContext* context, CallbackArguments* args) 
     return DynValue::FromString("Hello from C++!");
 }
 
+DynValue* activatetool(void*, ScriptExecutionContext*, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to activatetool");
+    }
+
+    DynValue* tool = args->RawGet(0, false);
+    if (tool == nullptr || tool->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Tool");
+    }
+
+    Tool* toolobj = (Tool*)(tool->Cast(StaticClass<Tool>()->GetType()));
+    if (toolobj == nullptr) {
+        return DynValue::FromString("Failed to cast Tool");
+    }
+
+    toolobj->CmdActivate();
+    return DynValue::FromNil();
+}
+
+DynValue* unequip(void*, ScriptExecutionContext*, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to unequiptool");
+    }
+
+    DynValue* tool = args->RawGet(0, false);
+    if (tool == nullptr || tool->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Tool");
+    }
+
+    Tool* toolobj = (Tool*)(tool->Cast(StaticClass<Tool>()->GetType()));
+    if (toolobj == nullptr) {
+        return DynValue::FromString("Failed to cast Tool");
+    }
+
+    toolobj->CmdUnequip();
+    return DynValue::FromNil();
+}
+
+DynValue* equip(void*, ScriptExecutionContext*, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to equiptool");
+    }
+
+    DynValue* tool = args->RawGet(0, false);
+    if (tool == nullptr || tool->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Tool");
+    }
+
+    Tool* toolobj = (Tool*)(tool->Cast(StaticClass<Tool>()->GetType()));
+    if (toolobj == nullptr) {
+        return DynValue::FromString("Failed to cast Tool");
+    }
+
+    toolobj->CmdEquip();
+    return DynValue::FromNil();
+}
+
+DynValue* loadstring(void*, ScriptExecutionContext* ctx, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to LoadString");
+    }
+
+    DynValue* source = args->RawGet(0, false);
+    if (source == nullptr || source->Type() != DynValue::DataType::String) {
+        return DynValue::FromString("Invalid argument, expected string");
+    }
+
+    UnityClass* stringClass = Unity::GetClass<"String", "mscorlib.dll", "System">();
+    UnityString* code = (UnityString*)source->Cast(stringClass->GetType());
+    if (code == nullptr) {
+        return DynValue::FromString("Failed to cast string");
+    }
+
+    Script* script = ctx->OwnerScript();
+    if (script == nullptr) {
+        return DynValue::FromString("Owner script not available");
+    }
+
+    return script->loadstring(code, script->Globals(), UnityString::New("LoadString"));
+}
+
+DynValue* serverequiptool(void*, ScriptExecutionContext*, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 2) {
+        return DynValue::FromString("Not enough arguments passed to serverequiptool");
+    }
+
+    DynValue* player = args->RawGet(0, false);
+    if (player == nullptr || player->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Player");
+    }
+
+    DynValue* tool = args->RawGet(1, false);
+    if (tool == nullptr || tool->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Tool");
+    }
+
+    Player* playerobj = (Player*)(player->Cast(StaticClass<Player>()->GetType()));
+    if (playerobj == nullptr) {
+        return DynValue::FromString("Failed to cast Player");
+    }
+
+    Tool* toolobj = (Tool*)(tool->Cast(StaticClass<Tool>()->GetType()));
+    if (toolobj == nullptr) {
+        return DynValue::FromString("Failed to cast Tool");
+    }
+
+    playerobj->EquipTool(toolobj);
+    return DynValue::FromNil();
+}
+
+DynValue* sendchat(void*, ScriptExecutionContext* ctx, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to SendChat");
+    }
+
+    DynValue* message = args->RawGet(0, false);
+    if (message == nullptr || message->Type() != DynValue::DataType::String) {
+        return DynValue::FromString("Invalid argument, expected string");
+    }
+
+    UnityClass* stringClass = Unity::GetClass<"String", "mscorlib.dll", "System">();
+    UnityString* msg = (UnityString*)message->Cast(stringClass->GetType());
+    if (msg == nullptr) {
+        return DynValue::FromString("Failed to cast string");
+    }
+
+    UnityObject* ChatServiceInstance = Unity::GetStaticFieldValue<UnityString*, "Instance">(StaticClass<ChatService>());
+
+    nasec::Assert(ChatServiceInstance != nullptr, "Failed to get ChatService instance");
+
+    UnityClass* chatClass = StaticClass<ChatService>();
+    Unity::GetMethod<"SendChat", "System.String">(chatClass)->Invoke<void, void*, UnityString*>(ChatServiceInstance, msg);
+
+    return DynValue::FromNil();
+}
+
+DynValue* fireclickdetector(void*, ScriptExecutionContext* ctx, CallbackArguments* args)
+{
+    int count = args->Count();
+    if (count < 1) {
+        return DynValue::FromString("Not enough arguments passed to FireClickDetector");
+    }
+
+    DynValue* instance = args->RawGet(0, false);
+    if (instance == nullptr || instance->Type() != DynValue::DataType::UserData) {
+        return DynValue::FromString("Invalid argument, expected Instance");
+
+    }
+
+    Instance* instanceobj = (Instance*)(instance->Cast(StaticClass<Instance>()->GetType()));
+    if (instanceobj == nullptr) {
+        return DynValue::FromString("Failed to cast Instance");
+    }
+
+    instanceobj->CmdClicked();
+
+    return DynValue::FromNil();
+}
+
 void InstallEnvironnement(Script *script)
 {
     RegisterCallback(script->Globals(), "poop", poop);
-    //
+    RegisterCallback(script->Globals(), "activatetool", activatetool);
+    RegisterCallback(script->Globals(), "unequiptool", unequip);
+    RegisterCallback(script->Globals(), "equiptool", equip);
+    RegisterCallback(script->Globals(), "loadstring", loadstring);
+    RegisterCallback(script->Globals(), "serverequiptool", serverequiptool);
+    RegisterCallback(script->Globals(), "sendchat", sendchat);
+    RegisterCallback(script->Globals(), "fireclickdetector", fireclickdetector);
 }
 
 void ScriptService::InstallHooks()
