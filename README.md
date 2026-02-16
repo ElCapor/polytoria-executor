@@ -40,7 +40,9 @@ You can open polyhack.exe for the normal executor, or injector.exe if you only n
 
 ## Community
 
-Join our discord server : <img alt="Discord" src="https://img.shields.io/discord/1468226435218018348">
+<img alt="Discord" src="https://img.shields.io/discord/1468226435218018348">
+
+Join our discord server to chat : [https://discord.gg/NrXZmyPRvh](https://discord.gg/NrXZmyPRvh)
 
 ---
 
