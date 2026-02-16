@@ -25,13 +25,10 @@ int main_thread()
 
 
     // We gotta wait for game to be started !
-    void* game = Unity::GetMethod<"get_Instance">(StaticClass<Game>())->Invoke<void*>();
-    if (!game) {
-        spdlog::info("Waiting for game instance...");
-        while (!game) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            game = Unity::GetMethod<"get_Instance">(StaticClass<Game>())->Invoke<void*>();
-        }
+    void* game = Unity::GetStaticFieldValue<void*, "singleton">(StaticClass<Game>());
+    while (!game) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        game = Unity::GetStaticFieldValue<void*, "singleton">(StaticClass<Game>());
     }
 
     UI::state = UI::UiState::Ready;

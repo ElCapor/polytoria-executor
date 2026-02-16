@@ -119,6 +119,7 @@ namespace Unity
         nasec::Assert(klass != nullptr, "Klass was nullptr");
         auto field = GetField<Name, Types...>(klass);
         field->GetStaticValue(&value);
+        // sometimes nullptr is a valid value, so we can't assert on it
         //nasec::Assert(value != nullptr, "Failed to get static field value");
 
         return value;
