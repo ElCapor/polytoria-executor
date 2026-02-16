@@ -11,6 +11,8 @@ UI::UiState UI::state = UI::NotReady;
 
 int UI::keybind = VK_DELETE;
 
+bool UI::blockGameInput = true; // Default: block game input when UI is open
+
 // +--------------------------------------------------------+
 // |                       Functions                        |
 // +--------------------------------------------------------+
@@ -103,8 +105,8 @@ LRESULT __stdcall WndProcHook(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return true;
 
-    // Block all input when UI is open
-	if (UI::state == UI::Ready) {
+    // Block all input when UI is open and input blocking is enabled
+	if (UI::state == UI::Ready && UI::blockGameInput) {
 		// Block standard mouse input (WM_MOUSEMOVE, WM_LBUTTONDOWN, etc.)
 		if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
 			return true;

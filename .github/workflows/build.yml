@@ -36,6 +36,22 @@ jobs:
           build/windows/x64/release/wowiezz.dll
           build/windows/x64/release/injector.exe
 
+    - name: Update README with latest build badge
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $runUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        $badgeUrl = "https://img.shields.io/badge/Download-Latest_Build-brightgreen?style=for-the-badge&logo=github"
+        $badgeLine = "[![Latest Build]($badgeUrl)]($runUrl)"
+        $readme = Get-Content README.md -Raw
+        $readme = $readme -replace '\[!\[Latest Build\]\(https://img\.shields\.io/badge/Download-Latest_Build[^\]]*\]\]\([^\)]*\)', $badgeLine
+        Set-Content README.md -Value $readme -NoNewline
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add README.md
+        git diff --cached --quiet || (git commit -m "Update download badge to run ${{ github.run_id }}" && git push)
+
     - name: Create Release
       id: create_release
       if: startsWith(github.ref, 'refs/tags/v')

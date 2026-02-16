@@ -1,5 +1,6 @@
 #include <ui/settingsui.h>
 #include <ui/premiumstyle.h>
+#include <ui/ui.h>
 #include <imgui.h>
 
 // +--------------------------------------------------------+
@@ -14,6 +15,30 @@ void SettingsUI::Init()
 void SettingsUI::DrawTab()
 {
     // Section header
+    PremiumStyle::DrawSectionHeader("Input Settings");
+    
+    ImGui::Spacing();
+    
+    // Game Input Blocking Toggle
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12, 8));
+    
+    bool blockInput = UI::blockGameInput;
+    if (ImGui::Checkbox("Block Game Input When UI Open", &blockInput))
+    {
+        UI::blockGameInput = blockInput;
+    }
+    
+    ImGui::PopStyleVar();
+    
+    // Description
+    ImGui::TextDisabled("When enabled, game input (keyboard, mouse, scroll) is blocked while the UI is open.");
+    ImGui::TextDisabled("Disable this to allow game interaction while using the UI.");
+    
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
+    // Appearance Settings Section
     PremiumStyle::DrawSectionHeader("Appearance Settings");
     
     ImGui::Spacing();

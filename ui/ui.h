@@ -16,6 +16,7 @@ public:
 
     static UiState state;
     static int keybind;
+    static bool blockGameInput; // When true, game input is blocked when UI is open
 
 private:
     static void DrawWaitingScreen();

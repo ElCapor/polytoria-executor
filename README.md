@@ -5,9 +5,13 @@
 
 ![Polyhack Banner](https://img.shields.io/badge/Polyhack-v3.0-blue?style=for-the-badge)
 
+[![Latest Build](https://img.shields.io/badge/Download-Latest_Build-brightgreen?style=for-the-badge&logo=github)](https://github.com/ElCapor/polytoria-executor/actions)
+
+# [Download](#download)
+
 **A Modern Script Executor for Polytoria**
 
-[Screenshots](#screenshots) • [Features](#features) • [Community](#community) • [Architecture](#architecture) • [Source Tree](#source-tree) • [Building](#building) • [Why v3](#why-v3)
+[Demo](#demo) • [Features](#features) • [Download](#Download) • [Community](#community) • [Architecture](#architecture) • [Source Tree](#source-tree) • [Building](#building) • [Why v3](#why-v3)
 
 </div>
 
@@ -21,9 +25,22 @@ The project leverages the MoonSharp Lua interpreter to execute scripts within Po
 
 ---
 
-## Screenshots
+## Demo
+
+<img src="screenshots/demo.gif">
 
 
+## Download
+You can download directly from this repo : [https://github.com/ElCapor/polytoria-executor/tree/master/.download](https://github.com/ElCapor/polytoria-executor/tree/master/.download)
+
+Or from the latest github actions : [https://github.com/ElCapor/polytoria-executor/actions](https://github.com/ElCapor/polytoria-executor/actions)
+
+You can open polyhack.exe for the normal executor, or injector.exe if you only need the internal UI.
+
+
+## Community
+
+<iframe src="https://discord.com/widget?id=1468226435218018348&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 ---
 

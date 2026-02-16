@@ -274,8 +274,7 @@ void AboutUI::DrawTab()
     ImGui::SetCursorPosX((windowWidth - 200.0f) * 0.5f);
     if (ImGui::Button("Become a Contributor!", ImVec2(200.0f, 0)))
     {
-        filesys::OpenUrlInBrowser("https://github.com/ElCapor/PolytoriaExecutor");
-    }
+        filesys::OpenUrlInBrowser("https://github.com/ElCapor/polytoria-executor
     
     ImGui::PopStyleVar();
     ImGui::PopStyleColor(4);

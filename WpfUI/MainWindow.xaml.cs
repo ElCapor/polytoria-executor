@@ -116,7 +116,7 @@ namespace PolyHack
         {
             if (isDLL)
             {
-                string dllPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "poly.dll");
+                string dllPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wowiezz.dll");
                 if (DllInjector.Inject("Polytoria Client", dllPath))
                 {
                     MessageBox.Show("Inject Success!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -124,7 +124,7 @@ namespace PolyHack
                 }
                 else
                 {
-                    MessageBox.Show("Failed to inject poly.dll into Polytoria Client!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Failed to inject wowiezz.dll into Polytoria Client!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 return;
             }
