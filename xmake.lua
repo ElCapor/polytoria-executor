@@ -16,7 +16,7 @@ target("wowiezz")
         os.cp(target:targetfile(), ".download/wowiezz.dll")
 
         if os.exists("WpfUI/bin/Release/net8.0-windows") then 
-            os.cp("WpfUI/bin/Release/net8.0-windows/**", ".download/")
+            os.cp("WpfUI/bin/Release/net8.0-windows/*", ".download/")
         end
     end)
 
