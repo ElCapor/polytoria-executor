@@ -13,6 +13,7 @@ namespace PremiumStyle
     ImFont* FontSemiBold = nullptr;
     ImFont* FontMedium = nullptr;
     ImFont* FontExtraBold = nullptr;
+    ImFont* FontMonospace = nullptr;  // Monospace font for code editors
 }
 
 // +--------------------------------------------------------+
@@ -27,19 +28,44 @@ void PremiumStyle::LoadFonts()
 {
     ImGuiIO& io = ImGui::GetIO();
     
-    // Configure font loading
+    // Configure font loading for UI fonts (proportional)
     ImFontConfig config;
     config.OversampleH = 2;
     config.OversampleV = 1;
     config.PixelSnapH = true;
     
-    // Load SNPro font family
+    // Load SNPro font family (proportional fonts - good for UI, bad for code editors)
     FontRegular = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Regular.ttf", 16.0f, &config);
     FontBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Bold.ttf", 16.0f, &config);
     FontLight = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Light.ttf", 16.0f, &config);
     FontSemiBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-SemiBold.ttf", 16.0f, &config);
     FontMedium = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Medium.ttf", 16.0f, &config);
     FontExtraBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-ExtraBold.ttf", 16.0f, &config);
+    
+    // IMPORTANT: Load a MONOSPACE font for code editors
+    // Code editors REQUIRE monospace fonts - proportional fonts break character spacing
+    // We use ImGui's default font (ProggyClean) which is monospace
+    // Alternatively, you could load a TTF monospace font like Consolas, Fira Code, etc.
+    ImFontConfig monoConfig;
+    monoConfig.OversampleH = 1;
+    monoConfig.OversampleV = 1;
+    monoConfig.PixelSnapH = true;
+    
+    // Try to load a common monospace font, fall back to default if not found
+    // Common monospace fonts: Consolas, Courier New, Fira Code, JetBrains Mono
+    FontMonospace = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 14.0f, &monoConfig);
+    
+    // If Consolas failed, try Courier New
+    if (!FontMonospace)
+    {
+        FontMonospace = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\cour.ttf", 14.0f, &monoConfig);
+    }
+    
+    // If all monospace fonts failed, use ImGui's default (ProggyClean - it's monospace)
+    if (!FontMonospace)
+    {
+        FontMonospace = io.FontDefault;
+    }
     
     // If font loading failed, fall back to default
     if (!FontRegular)

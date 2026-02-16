@@ -310,7 +310,7 @@ void ExplorerUI::DrawTab()
             if (PremiumStyle::IsPremiumEnabled)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.00f, 0.75f, 0.85f, 1.00f));
-                if (ImGui::Selectable(classStr.c_str()))
+                if (ImGui::Selectable(std::format("{}##class", className).c_str()))
                     ImGui::SetClipboardText(classStr.c_str());
                 if (ImGui::IsItemHovered())
                     ImGui::SetTooltip("Click to copy: %s", classStr.c_str());
@@ -318,7 +318,7 @@ void ExplorerUI::DrawTab()
             }
             else
             {
-                if (ImGui::Selectable(classStr.c_str()))
+                if (ImGui::Selectable(std::format("{}##class", className).c_str()))
                     ImGui::SetClipboardText(classStr.c_str());
             }
 
@@ -380,7 +380,7 @@ void ExplorerUI::DrawTab()
             if (PremiumStyle::IsPremiumEnabled)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.94f, 0.95f, 0.96f, 1.00f));
-                if (ImGui::Selectable(fullNameStr.c_str()))
+                if (ImGui::Selectable(std::format("{}##fullname", fullNameStr).c_str()))
                     ImGui::SetClipboardText(fullNameStr.c_str());
                 if (ImGui::IsItemHovered())
                     ImGui::SetTooltip("Click to copy: %s", fullNameStr.c_str());
@@ -388,7 +388,7 @@ void ExplorerUI::DrawTab()
             }
             else
             {
-                if (ImGui::Selectable(fullNameStr.c_str()))
+                if (ImGui::Selectable(std::format("{}##fullname", fullNameStr).c_str()))
                     ImGui::SetClipboardText(fullNameStr.c_str());
             }
 

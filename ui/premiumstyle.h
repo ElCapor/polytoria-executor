@@ -16,6 +16,10 @@ namespace PremiumStyle
     extern ImFont* FontMedium;       // SNPro-Medium - emphasis
     extern ImFont* FontExtraBold;    // SNPro-ExtraBold - strong emphasis
     
+    // Monospace font for code editors - CRITICAL: Code editors need monospace fonts!
+    // SNPro is proportional (variable-width), which breaks text editor character spacing
+    extern ImFont* FontMonospace;    // Monospace font for code editors
+    
     // Color palette - accessible for custom widgets
     namespace Colors
     {

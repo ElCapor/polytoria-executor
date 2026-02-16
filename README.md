@@ -1,6 +1,8 @@
 # Polyhack v3
 
 <div align="center">
+    <img src="polyhack.png">
+    
 
 ![Polyhack Banner](https://img.shields.io/badge/Polyhack-v3.0-blue?style=for-the-badge)
 

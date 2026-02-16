@@ -198,7 +198,15 @@ void ScriptSourceUI::DrawTab(ScriptDecompileTab *tab)
             ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.04f, 0.04f, 0.06f, 1.00f));
         }
         
+        // IMPORTANT: Use monospace font for code editor
+        // Proportional fonts break character spacing in code editors
+        if (PremiumStyle::FontMonospace)
+            ImGui::PushFont(PremiumStyle::FontMonospace);
+        
         tab->editor->Render("##ScriptEditor", false, ImVec2(0, 0), true);
+        
+        if (PremiumStyle::FontMonospace)
+            ImGui::PopFont();
         
         if (PremiumStyle::IsPremiumEnabled)
         {

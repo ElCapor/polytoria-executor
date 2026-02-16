@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PolyHack"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="PolyHack" Height="450" Width="800" Icon="yutech_2d.png" KeyDown="Window_KeyDown">
+        Title="PolyHack" Height="450" Width="800" Icon="polyhack.png" KeyDown="Window_KeyDown">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
@@ -68,7 +68,11 @@
             </TabItem>
             <TabItem x:Name="AboutTab">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Image Source="yutech_2d.png" Width="100" Height="100" Margin="10"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                        <Image Source="polyhack.png" Width="150" Height="150" Margin="10"/>
+                        <TextBlock Text="by" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
+                        <Image Source="yutech_2d.png" Width="100" Height="100" Margin="10"/>
+                    </StackPanel>
                     <TextBlock Text="Executor made by YuTech Labs" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
                     
                     <TextBlock Foreground="White" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" TextAlignment="Center">
