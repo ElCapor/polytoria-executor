@@ -7,7 +7,7 @@
 
 [![Latest Build](https://img.shields.io/badge/Download-Latest_Build-brightgreen?style=for-the-badge&logo=github)](https://github.com/ElCapor/polytoria-executor/actions)
 
-# [Download](#download)
+# [Download HERE](#download)
 
 **A Modern Script Executor for Polytoria**
 
