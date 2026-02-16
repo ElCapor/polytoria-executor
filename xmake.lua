@@ -11,10 +11,9 @@ target("wowiezz")
     add_files("**.cpp|injector/*.cpp")
     add_packages("spdlog", "microsoft-detours", "d3d11", "imgui", "boost", "nativefiledialog-extended")
     add_links("user32", "dbghelp", "d3d11")
-
-    after_build(function(target)
-        os.cp("/fonts", target:targetdir())
-    end)
+    
+    -- Fonts are now embedded in the binary via embeddedfonts.cpp
+    -- No need to copy fonts directory after build
 
 target("injector")
     set_kind("binary")

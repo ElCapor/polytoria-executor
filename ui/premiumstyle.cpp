@@ -1,5 +1,7 @@
 #include <ui/premiumstyle.h>
+#include <ui/embeddedfonts.h>
 #include <imgui.h>
+#include <spdlog/spdlog.h>
 
 // +--------------------------------------------------------+
 // |                       Variables                        |
@@ -34,24 +36,58 @@ void PremiumStyle::LoadFonts()
     config.OversampleV = 1;
     config.PixelSnapH = true;
     
-    // Load SNPro font family (proportional fonts - good for UI, bad for code editors)
-    FontRegular = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Regular.ttf", 16.0f, &config);
-    FontBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Bold.ttf", 16.0f, &config);
-    FontLight = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Light.ttf", 16.0f, &config);
-    FontSemiBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-SemiBold.ttf", 16.0f, &config);
-    FontMedium = io.Fonts->AddFontFromFileTTF("fonts/SNPro-Medium.ttf", 16.0f, &config);
-    FontExtraBold = io.Fonts->AddFontFromFileTTF("fonts/SNPro-ExtraBold.ttf", 16.0f, &config);
+    spdlog::info("[PremiumStyle] Loading fonts from embedded data...");
+    
+    // Load SNPro font family from embedded memory
+    // Using AddFontFromMemoryTTF with embedded font data
+    FontRegular = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_Regular_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_Regular_Size),
+        16.0f, &config);
+    
+    FontBold = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_Bold_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_Bold_Size),
+        16.0f, &config);
+    
+    FontLight = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_Light_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_Light_Size),
+        16.0f, &config);
+    
+    FontSemiBold = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_SemiBold_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_SemiBold_Size),
+        16.0f, &config);
+    
+    FontMedium = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_Medium_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_Medium_Size),
+        16.0f, &config);
+    
+    FontExtraBold = io.Fonts->AddFontFromMemoryTTF(
+        const_cast<unsigned char*>(EmbeddedFonts::SNPro_ExtraBold_Data),
+        static_cast<int>(EmbeddedFonts::SNPro_ExtraBold_Size),
+        16.0f, &config);
+    
+    // Log font loading status
+    if (FontRegular) spdlog::info("[PremiumStyle] Loaded SNPro-Regular from embedded data");
+    if (FontBold) spdlog::info("[PremiumStyle] Loaded SNPro-Bold from embedded data");
+    if (FontLight) spdlog::info("[PremiumStyle] Loaded SNPro-Light from embedded data");
+    if (FontSemiBold) spdlog::info("[PremiumStyle] Loaded SNPro-SemiBold from embedded data");
+    if (FontMedium) spdlog::info("[PremiumStyle] Loaded SNPro-Medium from embedded data");
+    if (FontExtraBold) spdlog::info("[PremiumStyle] Loaded SNPro-ExtraBold from embedded data");
     
     // IMPORTANT: Load a MONOSPACE font for code editors
     // Code editors REQUIRE monospace fonts - proportional fonts break character spacing
     // We use ImGui's default font (ProggyClean) which is monospace
-    // Alternatively, you could load a TTF monospace font like Consolas, Fira Code, etc.
+    // Alternatively, you could embed a TTF monospace font like Consolas, Fira Code, etc.
     ImFontConfig monoConfig;
     monoConfig.OversampleH = 1;
     monoConfig.OversampleV = 1;
     monoConfig.PixelSnapH = true;
     
-    // Try to load a common monospace font, fall back to default if not found
+    // Try to load a common monospace font from Windows, fall back to default if not found
     // Common monospace fonts: Consolas, Courier New, Fira Code, JetBrains Mono
     FontMonospace = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 14.0f, &monoConfig);
     
@@ -65,33 +101,46 @@ void PremiumStyle::LoadFonts()
     if (!FontMonospace)
     {
         FontMonospace = io.FontDefault;
+        spdlog::info("[PremiumStyle] Using ImGui default monospace font");
+    }
+    else
+    {
+        spdlog::info("[PremiumStyle] Loaded monospace font from system");
     }
     
     // If font loading failed, fall back to default
     if (!FontRegular)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-Regular, using default font");
         FontRegular = io.FontDefault;
     }
     if (!FontBold)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-Bold, using regular font");
         FontBold = FontRegular;
     }
     if (!FontLight)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-Light, using regular font");
         FontLight = FontRegular;
     }
     if (!FontSemiBold)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-SemiBold, using bold font");
         FontSemiBold = FontBold;
     }
     if (!FontMedium)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-Medium, using regular font");
         FontMedium = FontRegular;
     }
     if (!FontExtraBold)
     {
+        spdlog::warn("[PremiumStyle] Failed to load SNPro-ExtraBold, using bold font");
         FontExtraBold = FontBold;
     }
+    
+    spdlog::info("[PremiumStyle] Font loading complete");
 }
 
 void PremiumStyle::ApplyStyle()

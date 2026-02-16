@@ -2,13 +2,12 @@
 
 <div align="center">
     <img src="polyhack.png">
-    
 
 ![Polyhack Banner](https://img.shields.io/badge/Polyhack-v3.0-blue?style=for-the-badge)
 
 **A Modern Script Executor for Polytoria**
 
-[Features](#features) • [Architecture](#architecture) • [Source Tree](#source-tree) • [Building](#building) • [Why v3](#why-v3)
+[Screenshots](#screenshots) • [Features](#features) • [Community](#community) • [Architecture](#architecture) • [Source Tree](#source-tree) • [Building](#building) • [Why v3](#why-v3)
 
 </div>
 
@@ -19,6 +18,12 @@
 Polyhack is a sophisticated script executor designed for [Polytoria](https://polytoria.com), a user-generated content game platform similar to Roblox. Built as a DLL injection-based tool, Polyhack enables users to execute custom Lua scripts within the game environment, providing powerful capabilities for testing, debugging, and extending gameplay functionality.
 
 The project leverages the MoonSharp Lua interpreter to execute scripts within Polytoria's scripting environment, with comprehensive bindings to the game's internal API through Unity engine reflection.
+
+---
+
+## Screenshots
+
+
 
 ---
 
@@ -51,7 +56,7 @@ The project leverages the MoonSharp Lua interpreter to execute scripts within Po
 - **ImGui-Based Interface** - Clean, professional overlay rendered via DirectX 11 hooks
 - **Toggleable Overlay** - Press DELETE key to show/hide the UI
 - **Cursor Management** - Automatic cursor state handling when UI is active
-- **Custom Fonts** - SNPro font family for polished typography
+- **Embedded Fonts** - SNPro font family embedded directly in binary for portability
 - **Syntax Highlighting** - Full-featured text editor with Lua syntax highlighting
 
 ### 🔧 Developer Tools
@@ -153,7 +158,8 @@ polytoria-executor/
 │   ├── iconmanager.cpp/h  # Icon loading and management
 │   ├── premiumstyle.cpp/h # Custom ImGui styling
 │   ├── languagesdefiniton.cpp # Syntax highlighting definitions
-│   └── embedded_icons.h   # Embedded icon data
+│   ├── embedded_icons.h   # Embedded icon data
+│   └── embeddedfonts.h/cpp # Embedded font data (SNPro family)
 │
 ├── mirror/                # Network Mirroring/Hooks
 │   ├── hooks.cpp/h        # General hooks
@@ -172,8 +178,9 @@ polytoria-executor/
 ├── network/               # Network Utilities
 │   └── ...                # Network helper functions
 │
-├── fonts/                 # Font Assets
+├── fonts/                 # Font Assets (Source files for embedding)
 │   └── SNPro-*.ttf        # SNPro font family (various weights)
+│                          # Run ttf_to_header.py to embed into binary
 │
 ├── icons/                 # SVG Icons
 │   └── *.svg              # Instance type icons (vector)
@@ -182,7 +189,7 @@ polytoria-executor/
 │   └── *.png              # Instance type icons (raster)
 │
 ├── scripts/               # Utility Scripts
-│   └── ...                # Helper scripts
+│   └── ttf_to_header.py   # Convert TTF fonts to C++ embedded data
 │
 ├── injector/              # DLL Injector
 │   └── main.cpp           # Standalone injector executable
@@ -212,12 +219,17 @@ polytoria-executor/
 git clone https://github.com/ElCapor/polytoria-executor.git
 cd polytoria-executor
 
+# Generate embedded font data from TTF files
+python scripts/ttf_to_header.py fonts/ ui/embeddedfonts.h ui/embeddedfonts.cpp
+
 # Configure and build
 xmake config -m release
 xmake build
 
 # Output DLL will be in build/ directory
 ```
+
+> **Note:** The font embedding step is optional. If skipped, placeholder font data will be used and the system will fall back to default fonts.
 
 ### Dependencies (automatically managed by xmake)
 
@@ -335,8 +347,27 @@ This enables:
 - **Syntax-highlighted code editor** with Lua support
 - **Memory editor** for advanced debugging
 - **Responsive layout** with proper cursor management
+- **Embedded fonts** - No external font files required, all fonts are compiled into the binary
 
-### 7. Comprehensive Game Bindings
+### 7. Embedded Resources
+
+v3 embeds all resources directly into the binary:
+
+```cpp
+// Fonts are loaded from embedded memory, not external files
+FontRegular = io.Fonts->AddFontFromMemoryTTF(
+    const_cast<unsigned char*>(EmbeddedFonts::SNPro_Regular_Data),
+    static_cast<int>(EmbeddedFonts::SNPro_Regular_Size),
+    16.0f, &config);
+```
+
+Benefits:
+- **Portability** - Single DLL file, no external dependencies
+- **Reliability** - No missing font files at runtime
+- **Performance** - Faster loading from memory vs disk I/O
+- **Distribution** - Simpler deployment, just copy the DLL
+
+### 8. Comprehensive Game Bindings
 
 v3 includes complete bindings for Polytoria's type system:
 
@@ -348,7 +379,7 @@ v3 includes complete bindings for Polytoria's type system:
 - `NetworkEvent` - Network communication
 - `ChatService` - Chat functionality
 
-### 8. Safety Features
+### 9. Safety Features
 
 ```cpp
 // Assertions with descriptive messages
@@ -361,7 +392,7 @@ case DLL_PROCESS_DETACH:
     break;
 ```
 
-### 9. Extensible Custom Lua Environment
+### 10. Extensible Custom Lua Environment
 
 v3 provides a rich set of custom functions:
 
@@ -376,7 +407,7 @@ v3 provides a rich set of custom functions:
 | `fireclickdetector(instance)` | Fire click detector |
 | `identifyexecutor()` | Returns "elcapor" |
 
-### 10. Clean Build System
+### 11. Clean Build System
 
 Using xmake instead of Visual Studio projects:
 
