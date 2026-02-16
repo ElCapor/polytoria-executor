@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::wcout << L"Found process " << targetProcess << L" with PID: " << pid << std::endl;
-    std::cout << "Injecting DLL: " << dllPath << std::endl;
+    std::cout << "Will inject DLL in 6 seconds: " << dllPath << std::endl;
     
     Sleep(6000);
     if (InjectDLL(pid, dllPath)) {
