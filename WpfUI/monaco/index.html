@@ -10,13 +10,57 @@
             padding: 0;
             overflow: hidden;
         }
-        #container {
+        
+        /* Background container with image support */
+        #background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            z-index: 0;
+            /* Default: no background image */
+            background-image: none;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Semi-transparent overlay to ensure code readability */
+            background-color: #1E1E1E;
+        }
+        
+        #background-layer.with-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Dark overlay for better code contrast */
+            background: rgba(30, 30, 30, 0.85);
+        }
+        
+        #container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Make Monaco editor background transparent so background shows through */
+        .monaco-editor,
+        .monaco-editor-background,
+        .monaco-editor .inputarea.ime-input {
+            background-color: transparent !important;
+        }
+        
+        .monaco-editor .margin {
+            background-color: transparent !important;
         }
     </style>
 </head>
 <body>
+    <div id="background-layer"></div>
     <div id="container"></div>
 
     <!-- 1. Load the Monaco loader script from your local copy -->
@@ -25,12 +69,12 @@
         require.config({ paths: { 'vs': './lib/monaco/vs' } });
 
         // Global API references
-        var GetText, SetText, SetTheme, AddIntellisense, Refresh;
+        var GetText, SetText, SetTheme, AddIntellisense, Refresh, SetBackgroundImage, ClearBackgroundImage;
         var editor;
         var Proposals = [];
 
         require(['vs/editor/editor.main'], function () {
-            // Define Roblox-dark theme
+            // Define Roblox-dark theme with transparent background
             monaco.editor.defineTheme('roblox-dark', {
                 base: 'vs-dark',
                 inherit: true,
@@ -42,7 +86,8 @@
                     { token: 'string', foreground: 'ff9169' }
                 ],
                 colors: {
-                    'editor.background': '#1E1E1E'
+                    'editor.background': '#00000000',  // Transparent background
+                    'editor.lineHighlightBackground': '#FFFFFF10'  // Subtle line highlight
                 }
             });
 
@@ -114,6 +159,40 @@ game["Players"].LocalPlayer.JumpPower = 100`,
                 var text = editor.getValue();
                 editor.setValue("");
                 editor.setValue(text);
+            };
+            
+            // Background Image API
+            // SetBackgroundImage(url, overlayOpacity) - Sets a background image
+            // url: image URL or data URI (base64)
+            // overlayOpacity: 0.0 to 1.0 (darkness of overlay, default 0.85)
+            SetBackgroundImage = function(url, overlayOpacity) {
+                var bgLayer = document.getElementById('background-layer');
+                overlayOpacity = overlayOpacity !== undefined ? overlayOpacity : 0.85;
+                
+                bgLayer.style.backgroundImage = 'url("' + url + '")';
+                bgLayer.classList.add('with-image');
+                
+                // Update the overlay opacity
+                bgLayer.style.setProperty('--overlay-opacity', overlayOpacity);
+                
+                // Update the ::after pseudo-element dynamically
+                var styleId = 'bg-overlay-style';
+                var existingStyle = document.getElementById(styleId);
+                if (existingStyle) {
+                    existingStyle.remove();
+                }
+                
+                var style = document.createElement('style');
+                style.id = styleId;
+                style.textContent = '#background-layer.with-image::after { background: rgba(30, 30, 30, ' + overlayOpacity + '); }';
+                document.head.appendChild(style);
+            };
+            
+            // ClearBackgroundImage() - Removes the background image
+            ClearBackgroundImage = function() {
+                var bgLayer = document.getElementById('background-layer');
+                bgLayer.style.backgroundImage = 'none';
+                bgLayer.classList.remove('with-image');
             };
 
             window.onresize = function() { editor.layout(); };

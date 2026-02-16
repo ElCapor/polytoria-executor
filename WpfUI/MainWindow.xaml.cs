@@ -51,8 +51,34 @@ namespace PolyHack
                 if (e.IsSuccess)
                 {
                     await SetupIntellisense();
+                    await LoadBackgroundImage();
                 }
             };
+        }
+
+        private async Task LoadBackgroundImage()
+        {
+            // Load polyhack_banner.png as background image
+            string bannerPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "polyhack_banner.png");
+            
+            if (File.Exists(bannerPath))
+            {
+                try
+                {
+                    // Convert image to base64 data URI
+                    byte[] imageBytes = File.ReadAllBytes(bannerPath);
+                    string base64 = Convert.ToBase64String(imageBytes);
+                    string dataUri = $"data:image/png;base64,{base64}";
+                    
+                    // Set background with 0.9 overlay opacity for good code readability
+                    string script = $"SetBackgroundImage({JsonSerializer.Serialize(dataUri)}, 0.9)";
+                    await wv2.ExecuteScriptAsync(script);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to load background image: {ex.Message}");
+                }
+            }
         }
 
         private async Task SetupIntellisense()

@@ -11,7 +11,12 @@
   <ItemGroup>
     <Resource Include="yutech_2d.png" />
 	  <Resource Include="polyhack.png"/>
-    <None Update="poly.dll">
+	  <Resource Include="polyhack_banner.png"/>
+    <!-- Copy banner to output for Monaco background -->
+    <None Update="polyhack_banner.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wowiezz.dll">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="monaco\**">
