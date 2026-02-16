@@ -1,0 +1,92 @@
+﻿<Window x:Class="PolyHack.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PolyHack"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Title="PolyHack" Height="450" Width="800" Icon="yutech_2d.png" KeyDown="Window_KeyDown">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3E3E42" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#2D2D30" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1E1E1E" Padding="5,2">
+            <StackPanel Orientation="Horizontal">
+                <Button Click="Load_Click" ToolTip="Open File">
+                    <TextBlock Text="📂" FontSize="16" Foreground="White"/>
+                </Button>
+                <Button Click="Save_Click" ToolTip="Save File">
+                    <TextBlock Text="💾" FontSize="16" Foreground="White"/>
+                </Button>
+                
+                <Rectangle Width="1" Fill="#444" Margin="5,4"/>
+
+                <Button Click="Inject_Click" ToolTip="Inject">
+                    <TextBlock Text="💉" FontSize="16" Foreground="White"/>
+                </Button>
+                <Button Click="Execute_Click" ToolTip="Execute">
+                    <TextBlock Text="▶️" FontSize="16" Foreground="White"/>
+                </Button>
+
+                <Rectangle Width="1" Fill="#444" Margin="5,4"/>
+
+                <Button Click="About_Click" ToolTip="About">
+                    <TextBlock Text="ℹ️" FontSize="16" Foreground="White"/>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <TabControl x:Name="MainTabControl" Grid.Row="1" Background="#1e1e1e" BorderThickness="0">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabItem x:Name="EditorTab">
+                <wv2:WebView2 x:Name="wv2" />
+            </TabItem>
+            <TabItem x:Name="AboutTab">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="yutech_2d.png" Width="100" Height="100" Margin="10"/>
+                    <TextBlock Text="Executor made by YuTech Labs" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
+                    
+                    <TextBlock Foreground="White" HorizontalAlignment="Center" Margin="2" TextWrapping="Wrap" TextAlignment="Center">
+                        <Run Text="Made by "/>
+                        <Hyperlink NavigateUri="https://github.com/ElCapor" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Run Text="ElCapor" Foreground="#007ACC"/>
+                        </Hyperlink>
+                        <Run Text=" and "/>
+                        <Hyperlink NavigateUri="https://github.com/1337skid" RequestNavigate="Hyperlink_RequestNavigate">
+                            <Run Text="Ficello" Foreground="#007ACC"/>
+                        </Hyperlink>
+                        <LineBreak/>
+                        <Run Text="which are both from YuTech Labs" Foreground="Gray"/>
+                    </TextBlock>
+
+                    <Button Click="BackToEditor_Click" Content="Back to Editor" Background="#333" Foreground="White" Width="100" Margin="20"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
