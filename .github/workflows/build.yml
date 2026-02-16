@@ -41,7 +41,7 @@ jobs:
       run: xmake f -p windows -a x64 -m release -y
       
     - name: Build All targets
-      run: xmake build all -y
+      run: xmake -a -y
 
     - name: Zip Artifacts
       run: |
