@@ -1,4 +1,5 @@
 #include <hwidspoofer/multiclient.h>
+#include <spdlog/spdlog.h>
 
 #include <windows.h>
 #include <winternl.h>
@@ -72,18 +73,24 @@ typedef struct _OBJECT_TYPE_INFORMATION
 // -------------------------------------------------------------------
 USHORT GetMutantTypeIndex()
 {
+    spdlog::debug("[MultiClient] Retrieving Mutant type index...");
+
     // NtQueryObject with ObjectTypeInformation returns a structure
     // that contains the type name and its index. We create a dummy
     // mutant, query its type, and extract the index.
     HANDLE hDummy = CreateMutexW(NULL, FALSE, L"DummyMutexForTypeIndex");
     if (!hDummy)
+    {
+        spdlog::error("[MultiClient] Failed to create dummy mutex, error: {}", GetLastError());
         return 0;
+    }
 
     // We need NtQueryObject from ntdll.dll
     pNtQueryObject NtQueryObject = (pNtQueryObject)GetProcAddress(
         GetModuleHandleW(L"ntdll.dll"), "NtQueryObject");
     if (!NtQueryObject)
     {
+        spdlog::error("[MultiClient] Failed to resolve NtQueryObject from ntdll.dll");
         CloseHandle(hDummy);
         return 0;
     }
@@ -93,6 +100,7 @@ USHORT GetMutantTypeIndex()
     NTSTATUS status = NtQueryObject(hDummy, ObjectTypeInformation, NULL, 0, &size);
     if (status != 0xC0000004 && status != 0) // STATUS_INFO_LENGTH_MISMATCH is expected
     {
+        spdlog::error("[MultiClient] NtQueryObject (size query) failed with status: 0x{:08X}", (unsigned int)status);
         CloseHandle(hDummy);
         return 0;
     }
@@ -101,6 +109,7 @@ USHORT GetMutantTypeIndex()
     PBYTE buffer = (PBYTE)VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
     if (!buffer)
     {
+        spdlog::error("[MultiClient] VirtualAlloc failed to allocate {} bytes", size);
         CloseHandle(hDummy);
         return 0;
     }
@@ -108,6 +117,7 @@ USHORT GetMutantTypeIndex()
     status = NtQueryObject(hDummy, ObjectTypeInformation, buffer, size, NULL);
     if (status < 0)
     {
+        spdlog::error("[MultiClient] NtQueryObject failed with status: 0x{:08X}", (unsigned int)status);
         VirtualFree(buffer, 0, MEM_RELEASE);
         CloseHandle(hDummy);
         return 0;
@@ -118,6 +128,8 @@ USHORT GetMutantTypeIndex()
     // We just need the TypeIndex.
     POBJECT_TYPE_INFORMATION pTypeInfo = (POBJECT_TYPE_INFORMATION)buffer;
     USHORT typeIndex = (USHORT)pTypeInfo->TypeIndex;   // Note: TypeIndex is ULONG, but fits in USHORT
+
+    spdlog::info("[MultiClient] Detected Mutant type index: {}", typeIndex);
 
     VirtualFree(buffer, 0, MEM_RELEASE);
     CloseHandle(hDummy);
@@ -131,6 +143,8 @@ USHORT GetMutantTypeIndex()
 // -------------------------------------------------------------------
 void multiclient::CloseAllMutexesInCurrentProcess()
 {
+    spdlog::info("[MultiClient] Starting mutex cleanup...");
+
     // 1. Dynamically resolve the Mutant type index
     static USHORT mutantTypeIndex = 0;
     if (mutantTypeIndex == 0)
@@ -139,6 +153,7 @@ void multiclient::CloseAllMutexesInCurrentProcess()
         if (mutantTypeIndex == 0)
         {
             // Fallback: common values on modern Windows (10/11)
+            spdlog::warn("[MultiClient] Could not determine Mutant type index, using fallback (19)");
             mutantTypeIndex = 19;   // Often 19, but not guaranteed
         }
     }
@@ -147,15 +162,20 @@ void multiclient::CloseAllMutexesInCurrentProcess()
     pNtQuerySystemInformation NtQuerySystemInformation = (pNtQuerySystemInformation)GetProcAddress(
         GetModuleHandleW(L"ntdll.dll"), "NtQuerySystemInformation");
     if (!NtQuerySystemInformation)
+    {
+        spdlog::error("[MultiClient] Failed to resolve NtQuerySystemInformation from ntdll.dll");
         return;
+    }
 
     DWORD currentPid = GetCurrentProcessId();
+    spdlog::debug("[MultiClient] Current PID: {}", currentPid);
 
     // 3. Loop with a reasonable buffer size – grow if needed
     ULONG bufferSize = 0x10000; // 64KB initial
     PBYTE buffer = NULL;
     NTSTATUS status;
 
+    spdlog::debug("[MultiClient] Querying system handle information...");
     do
     {
         if (buffer)
@@ -163,17 +183,22 @@ void multiclient::CloseAllMutexesInCurrentProcess()
 
         buffer = (PBYTE)VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
         if (!buffer)
+        {
+            spdlog::error("[MultiClient] VirtualAlloc failed to allocate {} bytes for handle info", bufferSize);
             return;
+        }
 
         status = NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)64, // SystemExtendedHandleInformation = 64
                                           buffer, bufferSize, NULL);
         if (status == 0xC0000004) // STATUS_INFO_LENGTH_MISMATCH
         {
+            spdlog::debug("[MultiClient] Buffer too small ({}), increasing and retrying...", bufferSize);
             bufferSize *= 2;
             continue;
         }
         else if (status < 0)
         {
+            spdlog::error("[MultiClient] NtQuerySystemInformation failed with status: 0x{:08X}", (unsigned int)status);
             VirtualFree(buffer, 0, MEM_RELEASE);
             return;
         }
@@ -182,6 +207,9 @@ void multiclient::CloseAllMutexesInCurrentProcess()
 
     // 4. Parse the handle list
     PSYSTEM_HANDLE_INFORMATION_EX handleInfo = (PSYSTEM_HANDLE_INFORMATION_EX)buffer;
+    spdlog::info("[MultiClient] Found {} system-wide handles. Filtering for current process mutants...", handleInfo->NumberOfHandles);
+
+    int mutantsClosed = 0;
     for (ULONG_PTR i = 0; i < handleInfo->NumberOfHandles; i++)
     {
         PSYSTEM_HANDLE_TABLE_ENTRY_INFO_EX entry = &handleInfo->Handles[i];
@@ -195,7 +223,10 @@ void multiclient::CloseAllMutexesInCurrentProcess()
         // 5. Attempt to close this handle using DUPLICATE_CLOSE_SOURCE
         HANDLE hTargetProcess = OpenProcess(PROCESS_DUP_HANDLE, FALSE, currentPid);
         if (!hTargetProcess)
+        {
+            spdlog::error("[MultiClient] Failed to open current process with PROCESS_DUP_HANDLE");
             continue;
+        }
 
         HANDLE hDup = NULL;
         BOOL ret = DuplicateHandle(
@@ -207,15 +238,26 @@ void multiclient::CloseAllMutexesInCurrentProcess()
             FALSE,
             DUPLICATE_CLOSE_SOURCE);         // This flag closes the source handle
 
-        if (ret && hDup)
+        if (ret)
         {
-            // Success: the original handle in the target process is now closed.
-            // We must close our local copy.
-            CloseHandle(hDup);
+            spdlog::info("[MultiClient] Successfully closed mutant handle: 0x{:X}", entry->HandleValue);
+            mutantsClosed++;
+            if (hDup)
+            {
+                // Success: the original handle in the target process is now closed.
+                // We must close our local copy.
+                CloseHandle(hDup);
+            }
+        }
+        else
+        {
+            spdlog::warn("[MultiClient] Failed to close mutant handle 0x{:X}, error: {}", entry->HandleValue, GetLastError());
         }
 
         CloseHandle(hTargetProcess);
     }
+
+    spdlog::info("[MultiClient] Mutex cleanup complete. {} mutants closed.", mutantsClosed);
 
     VirtualFree(buffer, 0, MEM_RELEASE);
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <hwidspoofer/hwidspoofer.h>
 #include <string>
+#include <spdlog/spdlog.h>
 
 // Proxying version.dll
 // Forwarding exports to the real version.dll in System32
@@ -52,9 +53,11 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
             // Not our target process, just forward exports
             return TRUE;
         }
-        
+
         DisableThreadLibraryCalls(hinstDLL);
         spoofer::main_thread();
+
+        spdlog::info("[Proxy] DLL_PROCESS_ATTACH for target process: {}", processName);
             
         break;
     }

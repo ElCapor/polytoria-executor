@@ -9,9 +9,9 @@
  *
  */
 #include <hwidspoofer/hwidspoofer.h>
+#include <spdlog/spdlog.h>
 #include <cstdint>
 #include <hooking/hookmanager.h>
-#include <iostream>
 #include <unity/unity.h>
 #include <random>
 #include <algorithm>
@@ -41,11 +41,13 @@ void spoofer::main_thread()
 {
     OpenConsole();
     
+    spdlog::info("[SkipSpoofer] Initializing SkipSpoofer...");
+
     // I am gonna test a new approach to hook gameassembly...
     HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
     if (!kernel32)
     {
-        std::cerr << "Failed to get kernel32.dll handle" << std::endl;
+        spdlog::error("[SkipSpoofer] Failed to get kernel32.dll handle");
         return;
     }
 
@@ -53,15 +55,13 @@ void spoofer::main_thread()
     auto LoadLibraryW_addr = GetProcAddress(kernel32, "LoadLibraryW");
     if (!LoadLibraryW_addr)
     {
-        std::cerr << "Failed to get LoadLibraryW address" << std::endl;
+        spdlog::error("[SkipSpoofer] Failed to get LoadLibraryW address");
         return;
     }
 
     // Hook LoadLibraryW to detect when GameAssembly.dll is loaded
     HookManager::Install(reinterpret_cast<HMODULE(*)(LPCWSTR)>(LoadLibraryW_addr), LoadLibraryW_Hook);
-    std::cout << "[SkipSpoofer] LoadLibraryW hooked" << std::endl;
-
-    multiclient::CloseAllMutexesInCurrentProcess();
+    spdlog::info("[SkipSpoofer] LoadLibraryW hooked successfully");
 }
 
 // +--------------------------------------------------------+
@@ -79,30 +79,36 @@ UnityString*GetDeviceUniqueID_Hook()
     static bool init = false;
     if (!init)
     {
+        spdlog::info("[SkipSpoofer] Device Unique ID hook triggered, initializing Unity and cleanup...");
         Unity::Init();
         Unity::ThreadAttach();
         // good time to load dll if it exists
         if (std::filesystem::exists("wowiezz.dll"))
         {
-            std::cout << "[SkipSpoofer] Loading wowiezz.dll..." << std::endl;
+            spdlog::info("[SkipSpoofer] Found wowiezz.dll, loading...");
             LoadLibraryA("wowiezz.dll");
         }
+
+            
+        spdlog::info("[SkipSpoofer] Closing all mutexes for multi-client support...");
+        multiclient::CloseAllMutexesInCurrentProcess();
         init = true;
     }
     UnityString*originalID = HookManager::Call(GetDeviceUniqueID_Hook);
     if (!originalID) {
-        // we might be in a vm
+        spdlog::warn("[SkipSpoofer] originalID is null, might be in a VM. Returning scrambled ID.");
         return UnityString::New(scramble("9dafafc41f9790ff32f5e65ef03c503b97d8fdb3"));
     } else if (originalID->ToString() == "")
     {
+        spdlog::warn("[SkipSpoofer] originalID is empty string. Returning scrambled ID.");
         return UnityString::New(scramble("9dafafc41f9790ff32f5e65ef03c503b97d8fdb3"));
     }
 
     std::string originalIDStr = originalID->ToString();
     std::string scrambledID = scramble(originalIDStr);
     UnityString* fakeID = UnityString::New(scrambledID);
-    std::cout << "[SkipSpoofer] Original HWID: " << originalIDStr << std::endl;
-    std::cout << "[SkipSpoofer] Scrambled HWID: " << scrambledID << std::endl;
+    spdlog::info("[SkipSpoofer] Original HWID: {}", originalIDStr);
+    spdlog::info("[SkipSpoofer] Scrambled HWID: {}", scrambledID);
     return fakeID;
 }
 
@@ -117,12 +123,13 @@ HMODULE LoadLibraryW_Hook(LPCWSTR lpLibFileName)
     std::wstring libName(lpLibFileName);
     if (libName.find(L"GameAssembly.dll") != std::wstring::npos)
     {
-        std::cout << "[SkipSpoofer] GameAssembly.dll loaded, hooking..." << std::endl;
-        std::cout << "[SkipSpoofer] Base address: " << std::hex <<module << std::endl;
+        spdlog::info("[SkipSpoofer] GameAssembly.dll loaded, hooking...");
+        spdlog::info("[SkipSpoofer] Base address: 0x{:X}", (uintptr_t)module);
 
         // Hook GetDeviceUniqueID
         GetDeviceUniqueID_t originalGetDeviceUniqueID = reinterpret_cast<GetDeviceUniqueID_t>((std::uintptr_t)module + GetDeviceUniqueID_Addr);
         HookManager::Install(originalGetDeviceUniqueID, GetDeviceUniqueID_Hook);
+        spdlog::info("[SkipSpoofer] GetDeviceUniqueID hook installed");
     }
 
     return module;
