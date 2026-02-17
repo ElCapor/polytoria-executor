@@ -171,11 +171,12 @@ void multiclient::CloseAllMutexesInCurrentProcess()
     spdlog::debug("[MultiClient] Current PID: {}", currentPid);
 
     // 3. Loop with a reasonable buffer size – grow if needed
-    ULONG bufferSize = 0x10000; // 64KB initial
+    ULONG bufferSize = 0x100000; // Start with 1MB - much more reasonable for modern Windows
     PBYTE buffer = NULL;
     NTSTATUS status;
+    int retries = 0;
 
-    spdlog::debug("[MultiClient] Querying system handle information...");
+    spdlog::info("[MultiClient] Querying system handle information...");
     do
     {
         if (buffer)
@@ -188,12 +189,25 @@ void multiclient::CloseAllMutexesInCurrentProcess()
             return;
         }
 
+        ULONG requiredSize = 0;
         status = NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)64, // SystemExtendedHandleInformation = 64
-                                          buffer, bufferSize, NULL);
+                                          buffer, bufferSize, &requiredSize);
         if (status == 0xC0000004) // STATUS_INFO_LENGTH_MISMATCH
         {
-            spdlog::debug("[MultiClient] Buffer too small ({}), increasing and retrying...", bufferSize);
-            bufferSize *= 2;
+            // If the system returns requiredSize, use it plus some padding, otherwise double the buffer
+            if (requiredSize > 0)
+                bufferSize = requiredSize + 0x10000; // Add 64KB extra safety padding
+            else
+                bufferSize *= 2;
+            
+            spdlog::info("[MultiClient] Buffer too small, increasing size to {} bytes and retrying... (attempt {})", bufferSize, retries + 1);
+            
+            if (++retries > 20) // Safety break
+            {
+                spdlog::error("[MultiClient] Exceeded maximum retries for handle query");
+                VirtualFree(buffer, 0, MEM_RELEASE);
+                return;
+            }
             continue;
         }
         else if (status < 0)
@@ -209,6 +223,7 @@ void multiclient::CloseAllMutexesInCurrentProcess()
     PSYSTEM_HANDLE_INFORMATION_EX handleInfo = (PSYSTEM_HANDLE_INFORMATION_EX)buffer;
     spdlog::info("[MultiClient] Found {} system-wide handles. Filtering for current process mutants...", handleInfo->NumberOfHandles);
 
+    HANDLE hCurrentProcess = GetCurrentProcess();
     int mutantsClosed = 0;
     for (ULONG_PTR i = 0; i < handleInfo->NumberOfHandles; i++)
     {
@@ -221,22 +236,15 @@ void multiclient::CloseAllMutexesInCurrentProcess()
             continue;
 
         // 5. Attempt to close this handle using DUPLICATE_CLOSE_SOURCE
-        HANDLE hTargetProcess = OpenProcess(PROCESS_DUP_HANDLE, FALSE, currentPid);
-        if (!hTargetProcess)
-        {
-            spdlog::error("[MultiClient] Failed to open current process with PROCESS_DUP_HANDLE");
-            continue;
-        }
-
         HANDLE hDup = NULL;
         BOOL ret = DuplicateHandle(
-            hTargetProcess,                 // Process that owns the handle
-            (HANDLE)entry->HandleValue,     // Handle value to close
-            GetCurrentProcess(),             // Receiving process (our own)
-            &hDup,                           // We'll receive a copy (must close it)
-            0,                               // Ignored because of DUPLICATE_SAME_ACCESS
+            hCurrentProcess,              // Current process owns the handle
+            (HANDLE)entry->HandleValue,   // Handle value to close
+            hCurrentProcess,              // Target process (us)
+            &hDup,                        // Receive temporary duplicate
+            0,                            // Same access
             FALSE,
-            DUPLICATE_CLOSE_SOURCE);         // This flag closes the source handle
+            DUPLICATE_CLOSE_SOURCE);      // Closes the source handle
 
         if (ret)
         {
@@ -244,17 +252,10 @@ void multiclient::CloseAllMutexesInCurrentProcess()
             mutantsClosed++;
             if (hDup)
             {
-                // Success: the original handle in the target process is now closed.
                 // We must close our local copy.
                 CloseHandle(hDup);
             }
         }
-        else
-        {
-            spdlog::warn("[MultiClient] Failed to close mutant handle 0x{:X}, error: {}", entry->HandleValue, GetLastError());
-        }
-
-        CloseHandle(hTargetProcess);
     }
 
     spdlog::info("[MultiClient] Mutex cleanup complete. {} mutants closed.", mutantsClosed);

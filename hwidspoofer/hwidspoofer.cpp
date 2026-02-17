@@ -89,9 +89,10 @@ UnityString*GetDeviceUniqueID_Hook()
             LoadLibraryA("wowiezz.dll");
         }
 
-            
-        spdlog::info("[SkipSpoofer] Closing all mutexes for multi-client support...");
-        multiclient::CloseAllMutexesInCurrentProcess();
+        std::thread([]{
+            spdlog::info("[SkipSpoofer] Closing all mutexes for multi-client support...");
+            multiclient::CloseAllMutexesInCurrentProcess();
+        }).detach();
         init = true;
     }
     UnityString*originalID = HookManager::Call(GetDeviceUniqueID_Hook);
@@ -138,7 +139,3 @@ HMODULE LoadLibraryW_Hook(LPCWSTR lpLibFileName)
 //
 // Unity forces a single instance through a mutex: \Sessions\1\BaseNamedObjects\t-1-4-155-Polytoria-Client-exe-SingleInstanceMutex-Default
 //
-void ForceCloseMutex()
-{
-    const char*mutexName = "t-1-4-155-Polytoria-Client-exe-SingleInstanceMutex-Default";
-}
