@@ -36,6 +36,7 @@ std::string scramble(const std::string &input)
 // |                       Functions                        |
 // +--------------------------------------------------------+
 HMODULE LoadLibraryW_Hook(LPCWSTR lpLibFileName);
+HANDLE CreateMutexA_Hook(LPSECURITY_ATTRIBUTES lpMutexAttributes, BOOL bInitialOwner, LPCSTR lpName);
 
 void spoofer::main_thread()
 {
@@ -58,6 +59,16 @@ void spoofer::main_thread()
         spdlog::error("[SkipSpoofer] Failed to get LoadLibraryW address");
         return;
     }
+
+    auto CreateMutexA_addr = GetProcAddress(kernel32, "CreateMutexA");
+    if (!CreateMutexA_addr)    {
+        spdlog::error("[SkipSpoofer] Failed to get CreateMutexA address");
+        return;
+    }
+
+    // Hook CreateMutexA to intercept single instance mutex creation
+    HookManager::Install(reinterpret_cast<HANDLE(*)(LPSECURITY_ATTRIBUTES, BOOL, LPCSTR)>(CreateMutexA_addr), CreateMutexA_Hook);
+    spdlog::info("[SkipSpoofer] CreateMutexA hooked successfully");
 
     // Hook LoadLibraryW to detect when GameAssembly.dll is loaded
     HookManager::Install(reinterpret_cast<HMODULE(*)(LPCWSTR)>(LoadLibraryW_addr), LoadLibraryW_Hook);
@@ -89,10 +100,11 @@ UnityString*GetDeviceUniqueID_Hook()
             LoadLibraryA("wowiezz.dll");
         }
 
-        std::thread([]{
-            spdlog::info("[SkipSpoofer] Closing all mutexes for multi-client support...");
-            multiclient::CloseAllMutexesInCurrentProcess();
-        }).detach();
+        // This will crash the program because it's running too early
+        // std::thread([]{
+        //     spdlog::info("[SkipSpoofer] Closing all mutexes for multi-client support...");
+        //     multiclient::CloseAllMutexesInCurrentProcess();
+        // }).detach();
         init = true;
     }
     UnityString*originalID = HookManager::Call(GetDeviceUniqueID_Hook);
@@ -139,3 +151,18 @@ HMODULE LoadLibraryW_Hook(LPCWSTR lpLibFileName)
 //
 // Unity forces a single instance through a mutex: \Sessions\1\BaseNamedObjects\t-1-4-155-Polytoria-Client-exe-SingleInstanceMutex-Default
 //
+
+HANDLE CreateMutexA_Hook(LPSECURITY_ATTRIBUTES lpMutexAttributes, BOOL bInitialOwner, LPCSTR lpName)
+{
+    // Check if the mutex being created is the one used for single instance enforcement
+    std::string mutexName(lpName ? lpName : "");
+    if (mutexName.find("SingleInstanceMutex") != std::string::npos)
+    {
+        spdlog::info("[SkipSpoofer] Intercepted creation of SingleInstanceMutex, returning fake handle");
+        // Return a fake handle instead of creating the actual mutex
+        return (HANDLE)0xDEADBEEF; // Arbitrary non-null value that won't be a valid handle
+    }
+
+    // For all other mutexes, call the original CreateMutexA
+    return HookManager::Call(CreateMutexA_Hook, lpMutexAttributes, bInitialOwner, lpName);
+}
