@@ -7,7 +7,7 @@
 # ============================================================================
 
 [project]
-repo_url = "https://github.com/ElCapor/polyhack-docs"
+repo_url = "https://github.com/ElCapor/polyhack-executor"
 repo_name = "PolyHack-Docs"
 repo = "docs/assets/polyhack.png"
 edit_uri = "edit/docs/docs/"
