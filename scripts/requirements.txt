@@ -1,8 +1,0 @@
-# Requirements for asset conversion scripts
-# Install with: pip install -r requirements.txt
-
-# SVG to PNG conversion
-cairosvg>=2.5.0
-
-# Image processing
-Pillow>=9.0.0
