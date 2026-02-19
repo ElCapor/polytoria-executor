@@ -1,6 +1,12 @@
 # PolyLauncher
 
+<p align="center">
+  <img src="https://github.com/ElCapor/PolyLauncher/raw/main/.github/polylauncher.png" alt="PolyLauncher Logo" width="200">
+</p>
+
 PolyLauncher is a clean, modern, and open-source launcher for Polytoria, built with .NET 8 and WPF. It provides a streamlined experience for installing, updating, and launching Polytoria with built-in modding support, specifically designed to work seamlessly with PolyHack.
+
+![PolyLauncher Overview](https://github.com/ElCapor/PolyLauncher/raw/main/.github/overview.png)
 
 ## 🚀 Features
 
