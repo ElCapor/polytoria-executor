@@ -8,7 +8,7 @@
 
 [project]
 repo_url = "https://github.com/ElCapor/polytoria-executor"
-repo_name = "PolyHack"
+repo_name = "polytoria-executor"
 repo = "docs/assets/polyhack.png"
 edit_uri = "edit/docs/docs/"
 # The site_name is shown in the page header and the browser window title
