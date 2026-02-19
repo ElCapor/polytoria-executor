@@ -10,7 +10,7 @@
 repo_url = "https://github.com/ElCapor/polyhack-docs"
 repo_name = "PolyHack-Docs"
 repo = "docs/assets/polyhack.png"
-edit_uri = "edit/main/docs/"
+edit_uri = "edit/docs/docs/"
 # The site_name is shown in the page header and the browser window title
 #
 # Read more: https://zensical.org/docs/setup/basics/#site_name
