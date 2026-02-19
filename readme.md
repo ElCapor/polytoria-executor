@@ -35,4 +35,4 @@ All documentation content is located in the [docs/](docs/) directory and written
 
 Thank you for helping improve PolyHack!
 
-wee
+weedze
