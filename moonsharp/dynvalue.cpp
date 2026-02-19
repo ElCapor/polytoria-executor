@@ -4,6 +4,14 @@ DynValue* DynValue::FromString(const std::string& str) {
     return Unity::GetMethod<"NewString">(StaticClass<DynValue>())->Invoke<DynValue*>(UnityString::New(str));
 }
 
+DynValue* DynValue::FromNumber(double n) {
+    return Unity::GetMethod<"NewNumber">(StaticClass<DynValue>())->Invoke<DynValue*>(n);
+}
+
+double DynValue::AsNumber() {
+    return Unity::GetFieldValue<double, "m_Number">(StaticClass<DynValue>(), this);
+}
+
 DynValue* DynValue::FromCallback(UnityObject* callback, UnityString* name) {
     return Unity::GetMethod<"NewCallback">(StaticClass<DynValue>())->Invoke<DynValue*>(callback, name);
 }

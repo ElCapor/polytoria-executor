@@ -25,6 +25,7 @@ struct DynValue : public Object<DynValue, "DynValue", Unity::AssemblyFirstPass, 
     };
 
     static DynValue *FromString(const std::string &str);
+    static DynValue *FromNumber(double n);
     static DynValue *FromCallback(UnityObject *callback, UnityString *name);
     static DynValue *FromNil();
     
@@ -32,6 +33,7 @@ struct DynValue : public Object<DynValue, "DynValue", Unity::AssemblyFirstPass, 
 
 
     UnityObject* Cast(void* csType);
+    double AsNumber();
     Closure* AsFunction();
 };
 #endif /* DYNVALUE_H */

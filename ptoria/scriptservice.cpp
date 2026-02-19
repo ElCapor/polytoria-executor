@@ -6,6 +6,9 @@
 #include <ptoria/player.h>
 #include <ptoria/tool.h>
 #include <ptoria/chatservice.h>
+#include <ptoria/mousefunctions.h>
+#include <ptoria/drawinglib.h>
+#include <ptoria/http.h>
 
 std::vector<BaseScript *> ScriptService::whitelisted;
 
@@ -266,6 +269,25 @@ void InstallEnvironnement(Script *script)
     RegisterCallback(script->Globals(), "sendchat", sendchat);
     RegisterCallback(script->Globals(), "fireclickdetector", fireclickdetector);
     RegisterCallback(script->Globals(), "identifyexecutor", identifyexecutor);
+
+    // Mouse control functions
+    RegisterCallback(script->Globals(), "mouse_move", mouse_move);
+    RegisterCallback(script->Globals(), "mouse_get_position", mouse_get_position);
+    RegisterCallback(script->Globals(), "mouse_click", mouse_click);
+    RegisterCallback(script->Globals(), "mouse_down", mouse_down);
+    RegisterCallback(script->Globals(), "mouse_up", mouse_up);
+    RegisterCallback(script->Globals(), "mouse_scroll", mouse_scroll);
+    RegisterCallback(script->Globals(), "mouse_lock", mouse_lock);
+    RegisterCallback(script->Globals(), "mouse_visible", mouse_visible);
+
+    // Drawing library functions
+    RegisterCallback(script->Globals(), "draw_line", draw_line);
+    RegisterCallback(script->Globals(), "draw_rect", draw_rect);
+    RegisterCallback(script->Globals(), "draw_circle", draw_circle);
+    RegisterCallback(script->Globals(), "draw_text", draw_text_func);
+    RegisterCallback(script->Globals(), "draw_clear", draw_clear);
+
+    RegisterCallback(script->Globals(), "httpget", httpget);
 }
 
 void ScriptService::InstallHooks()

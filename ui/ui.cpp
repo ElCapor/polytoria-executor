@@ -143,6 +143,7 @@ LRESULT __stdcall WndProcHook(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 #include <imgui_impl_win32.h>
 #include <ui/premiumstyle.h>
 #include <ui/iconmanager.h>
+#include <ptoria/drawinglib.h>
 
 HRESULT HookPresent(IDXGISwapChain* swap, UINT swapInterval, UINT flags)
 {
@@ -189,6 +190,9 @@ HRESULT HookPresent(IDXGISwapChain* swap, UINT swapInterval, UINT flags)
     ImGui::NewFrame();
 
     UI::Draw();
+    
+    // Render drawing library commands (thread-safe, drawn on foreground)
+    DrawingLib::RenderDrawCommands();
     
     ImGui::Render();
     ID3D11RenderTargetView *target = dx11::GetRenderTarget();
