@@ -1,0 +1,56 @@
+site_name: Polytoria Executor Documentation
+site_description: Documentation for the Polytoria Executor (Polyhack v3) - Lua environment, custom functions, and internals
+site_author: Polyhack Team
+
+repo_url: https://github.com/polyhack
+edit_url: ""
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.tabbed:
+      alternate: true
+  - attr_list
+  - md_in_html
+  - tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.linehighlight:
+      highlight_lines: true
+  - pymdownx.snippets
+
+nav:
+  - Home: index.md
+  - Lua Environment:
+      - lua/index.md
+      - Functions: lua/functions.md
+      - Beginner Guide: lua/beginner.md
+      - Advanced Guide: lua/advanced.md
+  - Internals:
+      - internals/index.md
+      - Architecture: internals/architecture.md
+      - Hooking System: internals/hooking.md
+      - Unity Integration: internals/unity.md
+
+plugins:
+  - search:
+      lang: en
