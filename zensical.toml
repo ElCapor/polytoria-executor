@@ -58,7 +58,8 @@ nav = [
           { "Hooking System" = "internals/hooking.md" },
           { "Unity Integration" = "internals/unity.md" }
       ] }
-  ] }
+  ] },
+  { "PolyLauncher" = "polylauncher.md" }
 ]
 
 # The copyright notice appears in the page footer and can contain an HTML

@@ -52,14 +52,22 @@ Polytoria Executor is a high-performance C++23 DLL designed for injection into P
 
 ## :material-lightning-bolt: Quick Setup
 
+### 📥 Download
+
+You can download the latest version of Polytoria Executor (PolyHack) from the following sources:
+
+-   **Pre-built Binaries**: Available in the [.download/](https://github.com/ElCapor/polytoria-executor/tree/master/.download) directory of the repository.
+-   **Automated Builds**: Check the [GitHub Actions](https://github.com/ElCapor/polytoria-executor/actions) page for the latest successful workflow runs.
+-   **PolyLauncher**: For a more automated experience, use [PolyLauncher](polylauncher.md) to manage your installation and launch the game with PolyHack pre-configured.
+
 ### Installation
 
-!!! info "Step 1: Build"
-    Build the project using `xmake`:
+!!! info "Step 1: Build (Optional)"
+    If you wish to build from source, use `xmake`:
     `xmake config -m release && xmake build`
 
 !!! info "Step 2: Install"
-    Copy everything from the `.download/` directory into your game root.
+    Copy the files from the `.download/` directory into your game root.
 
 !!! info "Step 3: Inject"
     Run `injector.exe` or use `version.dll` proxying for automatic loading.
