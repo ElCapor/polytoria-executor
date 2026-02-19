@@ -515,4 +515,6 @@ This tool is intended for educational purposes and legitimate game testing only.
 
 **Made with ❤️ by the Polyhack Team**
 
+HttpGet, Drawing and Mouse functions added by Miiself (Discord: miiself_) :3
+
 </div>
